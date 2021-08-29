@@ -1,0 +1,6 @@
+# ignore output directories.
+bin/
+obj/
+
+# ignore experimental directories.
+woto_files/
