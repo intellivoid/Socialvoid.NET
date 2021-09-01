@@ -1,37 +1,43 @@
 <Project Sdk="Microsoft.NET.Sdk">
-	<!-- 
-	This file is part of GUISharp Project (https://github.com/GUISharp/GUISharp).
-	Copyright (c) 2021 GUISharp Authors.
+<!--
+  This file is part of SocialVoid.NET Project (https://github.com/Intellivoid/SocialVoid.NET).
+  Copyright (c) 2021 SocialVoid.NET Authors.
+ 
+  This library is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, version 3.
+ 
+  This library is distributed in the hope that it will be useful, but
+  WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with this source code of library. 
+  If not, see <http://www.gnu.org/licenses/>.
 
-	This library is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, version 3.
-
-	This library is distributed in the hope that it will be useful, but
-	WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-	General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this source code of library. 
-	If not, see <http://www.gnu.org/licenses/>.
-	-->
+-->
 	<!--===================================================-->
 	<PropertyGroup>
-		<RuntimeIdentifier Condition="'$(OS)' == 'unix'">linux-x64</RuntimeIdentifier>
-		<RuntimeIdentifier Condition="'$(OS)' == 'Windows_NT'">win-x64</RuntimeIdentifier>
+		<!--
+			<RuntimeIdentifier Condition="'$(OS)' == 'unix'">linux-x64</RuntimeIdentifier>
+			<RuntimeIdentifier Condition="'$(OS)' == 'Windows_NT'">win-x64</RuntimeIdentifier>
+		-->
 		<AssemblyName>SocialVoid</AssemblyName>
 		<RootNamespace>SocialVoid</RootNamespace>
 		<description>The official Socialvoid RPC Library written for C#</description>
 		<NeutralLanguage>en-US</NeutralLanguage>
-		<TargetFramework Condition="'$(OS)' == 'Windows_NT'">net5.0;net461;netstandard2.0;netstandard2.1;uap10.0;monoandroid9.0;xamarin.ios10</TargetFramework>
-		<TargetFramework Condition="'$(OS)' == 'unix'">net5.0</TargetFramework>
+		<!--
+			<TargetFramework Condition="'$(OS)' == 'Windows_NT'">net5.0;net461;netstandard2.0;netstandard2.1;uap10.0;monoandroid9.0;xamarin.ios10</TargetFramework>
+			<TargetFramework Condition="'$(OS)' == 'unix'">net5.0</TargetFramework>
+		-->
+		<TargetFramework>net5.0</TargetFramework>
 		<PackageId>SovialVoid</PackageId>
 		<Version>0.0.1</Version>
 		<Authors>SocialVoid Team</Authors>
     	<PackageProjectUrl>https://github.com/intellivoid/Socialvoid.NET</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/intellivoid/Socialvoid.NET</RepositoryUrl>
-		<PackageIconUrl>https://github.com/intellivoid/Socialvoid.NET/raw/master/GUISharp/Icon.ico</PackageIconUrl>
+		<PackageIconUrl>https://github.com/intellivoid/Socialvoid.NET/raw/master/SocialVoid/Icon.ico</PackageIconUrl>
 		<PackageIcon>Icon.png</PackageIcon>
 		<RepositoryType>git</RepositoryType>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -42,7 +48,7 @@
 	</PropertyGroup>
 	<!--===================================================-->
 	<PropertyGroup>
-		<NoWarn>1591;1701;1702;1705</NoWarn>
+		<NoWarn>1701;1702;1705</NoWarn>
 	</PropertyGroup>
 	<!--===================================================-->
 	<PropertyGroup>
@@ -148,6 +154,7 @@
 	<!--===================================================-->
 </Project>
 
-<!--End of the GUISharp Project File.-->
-<!--2019 - 2021 (C) wotoTeam-->
+<!--End of the SocialVoid.NET Project File.-->
+<!--2021 (C) Intellivoid Inc. -->
+<!--2021 (C) SocialVoid Team -->
 

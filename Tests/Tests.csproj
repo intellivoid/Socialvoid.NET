@@ -1,8 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
-	<!-- GUISharp Project
-	Copyright (C) 2019 - 2021 ALiwoto
-	This file is subject to the terms and conditions defined in
-	file 'LICENSE', which is part of the source code.-->
+<!--
+  This file is part of SocialVoid.NET Project (https://github.com/Intellivoid/SocialVoid.NET).
+  Copyright (c) 2021 SocialVoid.NET Authors.
+ 
+  This library is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, version 3.
+ 
+  This library is distributed in the hope that it will be useful, but
+  WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with this source code of library. 
+  If not, see <http://www.gnu.org/licenses/>.
+
+-->
 	<!--===================================================-->
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
@@ -46,6 +60,11 @@
 		<!--======================-->
 	</ItemGroup>
 	<!--===================================================-->
+	<ItemGroup>
+		<PackageReference Include="nunit" Version="3.12.0" />
+    	<PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
+    	<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+	</ItemGroup>
 	<!--===================================================-->
 	<ItemGroup>
 		<!--Include the project folders here.-->

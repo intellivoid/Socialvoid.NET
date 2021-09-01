@@ -4,3 +4,6 @@ obj/
 
 # ignore experimental directories.
 woto_files/
+woto_docs/
+woto_tests/
+woto_objects/
