@@ -1,6 +1,6 @@
 <!--
-  This file is part of SocialVoid.NET Project (https://github.com/Intellivoid/SocialVoid.NET).
-  Copyright (c) 2021 SocialVoid.NET Authors.
+  This file is part of Socialvoid.NET Project (https://github.com/Intellivoid/Socialvoid.NET).
+  Copyright (c) 2021 Socialvoid.NET Authors.
  
   This library is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,10 +17,10 @@
 
 -->
 
-> #### NOTE: This code style standard for SocialVoid.NET is a work in progress and much of the code does not currently conform to these rules.  This is something that will be addressed by the core team.
+> #### NOTE: This code style standard for Socialvoid.NET is a work in progress and much of the code does not currently conform to these rules.  This is something that will be addressed by the core team.
 
 # Introduction
-As the SocialVoid.NET project gains more traction and becomes more widely used, we aim to provide a more professional and consistent look to the large amount of source now in the project.  It was a broadly supported decision by the core development team to follow the Microsoft coding guidelines (the default provided in Visual Studio's C# editor).  These coding guidelines listed below are based on a [MSDN blog post](http://blogs.msdn.com/b/brada/archive/2005/01/26/361363.aspx) from 2005 by Brad Abrams describing the internal coding guidelines at Microsoft, with some changes to suit our project.
+As the Socialvoid.NET project gains more traction and becomes more widely used, we aim to provide a more professional and consistent look to the large amount of source now in the project.  It was a broadly supported decision by the core development team to follow the Microsoft coding guidelines (the default provided in Visual Studio's C# editor).  These coding guidelines listed below are based on a [MSDN blog post](http://blogs.msdn.com/b/brada/archive/2005/01/26/361363.aspx) from 2005 by Brad Abrams describing the internal coding guidelines at Microsoft, with some changes to suit our project.
 # Coding Guidelines
 
 ## Tabs & Indenting
@@ -117,8 +117,8 @@ Comments must provide added value or explanation to the code. Simply describing 
 Each file **should** start with a copyright notice. This is a short statement declaring the project name and copyright notice, and directing the reader to the license document elsewhere in the project. To avoid errors in doc comment builds, avoid using triple-slash doc comments.
 ```csharp
 /*
- * This file is part of SocialVoid.NET Project (https://github.com/Intellivoid/SocialVoid.NET).
- * Copyright (c) 2021 SocialVoid.NET Authors.
+ * This file is part of Socialvoid.NET Project (https://github.com/Intellivoid/Socialvoid.NET).
+ * Copyright (c) 2021 Socialvoid.NET Authors.
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -254,7 +254,7 @@ In addition, the goal is to have clean, readable source. Code legibility should 
 ## File Organization
 * Source files should contain only one public type, although multiple internal types are permitted if required.
 * Source files should be given the name of the public type in the file.
-* Directory names should follow the namespace for the class after `SocialVoid`. For example, one would expect to find the public class `SocialVoid.Constants.WotoTools` in **SocialVoid\Constants\WotoTools.cs**.
+* Directory names should follow the namespace for the class after `Socialvoid`. For example, one would expect to find the public class `Socialvoid.Constants.WotoTools` in **Socialvoid\Constants\WotoTools.cs**.
 * Class members should be grouped logically, and encapsulated into regions:
 
 ```csharp

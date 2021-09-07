@@ -1,8 +1,8 @@
 using System;
-using SocialVoid.Errors;
-using SocialVoid.Errors.ServerErrors;
-using SocialVoid.Errors.NetworkErrors;
-using SocialVoid.Errors.ValidationErrors;
+using Socialvoid.Errors;
+using Socialvoid.Errors.ServerErrors;
+using Socialvoid.Errors.NetworkErrors;
+using Socialvoid.Errors.ValidationErrors;
 using NUnit.Framework;
 
 
