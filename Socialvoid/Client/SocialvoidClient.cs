@@ -1,11 +1,24 @@
-﻿using System;
-using System.Text.Encodings;
-using System.Text;
+﻿/*
+ * This file is part of Socialvoid.NET Project (https://github.com/Intellivoid/Socialvoid.NET).
+ * Copyright (c) 2021 Socialvoid.NET Authors.
+ *
+ * This library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this source code of library. 
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+
+using System;
 using System.Net.Http;
-using System.Collections.Generic;
 using System.IO;
-using StreamJsonRpc;
-using StreamJsonRpc.Protocol;
 using Socialvoid.Security;
 using Socialvoid.JObjects;
 using Socialvoid.Errors.ServerErrors;
@@ -127,10 +140,6 @@ namespace Socialvoid.Client
 		#endregion
 		//-------------------------------------------------
 		#region field's Region
-		/// <summary>
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		protected JsonMessageFormatter _formatter = new(Encoding.UTF8);
 		/// <summary>
 		/// the endpoint url of socialvoid servers.
 		/// <code> since: v0.0.0 </code>
@@ -256,7 +265,7 @@ namespace Socialvoid.Client
 				{PublicHashKey, PublicHash},
 				{PrivateHashKey, PrivateHash},
 				{PlatformKey, Platform},
-				//{NameKey, ClientName},
+				{NameKey, ClientName},
 				{VersionKey, Version},
 			};
 
@@ -267,8 +276,18 @@ namespace Socialvoid.Client
 			message.Content = SerializeContent(request);
 			message.Content.Headers.ContentType = _contentTypeValue;
 			var jresp = ParseContent<SessionEstablished>(message);
+			
+			if (!string.IsNullOrEmpty(jresp.Result.ChallengeSecret))
+			{
+				_should_otp = true;
+				_otp = GetChallengeAnswer(jresp.Result.ChallengeSecret);
+				// set challenege secret to null to avoid sending it again.
+				// this will avoid future conflicts in using old challenge secret.
+				jresp.Result.ChallengeSecret = null;
+			}
+			_session = jresp.Result;
 
-			return null;
+			return _session;
 		}
 		/// <summary>
 		/// AuthenticateUser method (session.authenticate_user),
@@ -359,6 +378,14 @@ namespace Socialvoid.Client
 			Console.WriteLine(contentStr);
 		}
 
+		/// <summary>
+		/// returns a challenge's answer using the session's challenge secret.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		protected internal virtual string GetChallengeAnswer(string secret)
+		{
+			return null;
+		}
 
 		#endregion
 		//-------------------------------------------------
