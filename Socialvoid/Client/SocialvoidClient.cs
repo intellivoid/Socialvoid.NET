@@ -17,9 +17,11 @@
  */
 
 using System;
+using System.Text;
 using System.Net.Http;
 using System.IO;
 using Socialvoid.Security;
+using Socialvoid.Security.Otp;
 using Socialvoid.JObjects;
 using Socialvoid.Errors.ServerErrors;
 using Socialvoid.Errors.AuthenticationErrors;
@@ -341,9 +343,18 @@ namespace Socialvoid.Client
 		/// <exception cref="TwoFactorAuthenticationRequiredException">
 		/// Thrown if two-factor authentication is required.
 		/// </exception>
-		public virtual void AuthenticateUser(SessionIdentification sessionID,
-			string username, string password, string otp = null)
+		public virtual void AuthenticateUser(string username, string password,
+			string otp = null, SessionIdentification sessionID = null)
 		{
+			if (sessionID == null && _session != null)
+			{
+				sessionID = new()
+				{
+					SessionID = _session.SessionID,
+					ClientPublicHash = PublicHash
+				};
+			}
+
 			JArgs args = new(){
 				{UsernameKey, username},
 				{PasswordKey, password},
@@ -357,12 +368,14 @@ namespace Socialvoid.Client
 			if (IsOtpValid(otp))
 			{
 				args.Add(OtpKey, otp);
+				sessionID.ChallengeAnswer = otp;
 			}
-			else if (_should_otp && IsOtpValid(otp))
+			else if (_should_otp && IsOtpValid(_otp))
 			{
 				// after adding otp answer to args, don't forget to set
 				// _should_otp to false (and _otp to null).
 				args.Add(OtpKey, _otp);
+				sessionID.ChallengeAnswer = _otp;
 				_should_otp = false;
 				_otp = null;
 			}
@@ -384,7 +397,9 @@ namespace Socialvoid.Client
 		/// </summary>
 		protected internal virtual string GetChallengeAnswer(string secret)
 		{
-			return null;
+			var otp = new Totp(Encoding.UTF8.GetBytes(secret));
+			return KeyGeneration.GetSha1(otp.ComputeTotp() + PrivateHash);;
+			//return null;
 		}
 
 		#endregion
@@ -582,6 +597,7 @@ namespace Socialvoid.Client
 
 			return jresp;
 		}
+		
 		#endregion
 		//-------------------------------------------------
 	}

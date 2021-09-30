@@ -24,13 +24,13 @@ namespace Socialvoid.Security
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
 		[JsonPropertyName("id")]
-		public string SessionID { get; internal set; }
+		public string SessionID { get; set; }
 		/// <summary>
 		/// The Public Hash of the client used when establishing the session.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
 		[JsonPropertyName("challenge")]
-		internal string ChallengeSecret { get; set; }
+		public string ChallengeSecret { get; set; }
 		#endregion
 		//-------------------------------------------------
 		#region static field's Region
@@ -53,7 +53,7 @@ namespace Socialvoid.Security
 		/// <summary>
 		///
 		/// </summary>
-		private SessionEstablished()
+		public SessionEstablished()
 		{
 			;// make is private, so user use `EstablishNew` static method.
 		}

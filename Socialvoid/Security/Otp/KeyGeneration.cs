@@ -23,6 +23,7 @@
 
 
 using System;
+using System.Text;
 using System.Security.Cryptography;
 
 namespace Socialvoid.Security.Otp
@@ -100,7 +101,7 @@ namespace Socialvoid.Security.Otp
 				DeriveKeyFromMaster(masterKey, 
 					KeyUtilities.GetBigEndianBytes(serialNumber), mode);
 
-		private static HashAlgorithm GetHashAlgorithmForMode(OtpHashMode mode)
+		internal static HashAlgorithm GetHashAlgorithmForMode(OtpHashMode mode)
 		{
 			switch(mode)
 			{
@@ -113,7 +114,7 @@ namespace Socialvoid.Security.Otp
 			}
 		}
 
-		private static int LengthForMode(OtpHashMode mode)
+		internal static int LengthForMode(OtpHashMode mode)
 		{
 			switch(mode)
 			{
@@ -125,7 +126,17 @@ namespace Socialvoid.Security.Otp
 					return 20;
 			}
 		}
-		
+		internal static string GetSha1(string value)
+		{
+			var data = Encoding.ASCII.GetBytes(value);
+			var hashData = new SHA1Managed().ComputeHash(data);
+			var hash = string.Empty;
+			foreach (var b in hashData)
+			{
+				hash += b.ToString("X2");
+			}
+			return hash;
+		}
 		#endregion
 		//-------------------------------------------------
 	}

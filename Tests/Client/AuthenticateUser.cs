@@ -47,7 +47,7 @@ namespace Tests.Client
 				SocialvoidClient.GetClient(publicHash, 
 					privateHash, platform, name, version);
 			myClient.CreateSession();
-			myClient.AuthenticateUser(new(), "aliwoto", "12345678");
+			myClient.AuthenticateUser("aliwoto", "12345678");
 		}
 
 
