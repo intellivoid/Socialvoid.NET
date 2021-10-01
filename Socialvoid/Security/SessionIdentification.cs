@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Socialvoid.Security
 {
 	/// <summary>
@@ -26,17 +28,20 @@ namespace Socialvoid.Security
 		/// The ID of the session obtained when establishing a session.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
+		[JsonPropertyName("session_id")]
 		public string SessionID { get; internal set; }
 		/// <summary>
 		/// The Public Hash of the client used when establishing the session.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
+		[JsonPropertyName("client_public_hash")]
 		public string ClientPublicHash { get; internal set; }
 		/// <summary>
 		/// The session challenge answer revolving around the client's
 		/// private hash, the same client used to establish the session.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
+		[JsonPropertyName("challenge_answer")]
 		public string ChallengeAnswer { get; internal set; }
 		#endregion
 		//-------------------------------------------------

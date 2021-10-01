@@ -45,7 +45,7 @@ namespace Socialvoid.Security.Otp
 		/// <exception cref="ArgumentException"/>
 		public static byte[] ToBytes(string input)
 		{
-			if(string.IsNullOrEmpty(input))
+			if (string.IsNullOrEmpty(input))
 			{
 				throw new ArgumentNullException("input");
 			}
@@ -61,7 +61,7 @@ namespace Socialvoid.Security.Otp
 			{
 				int cValue = CharToValue(c);
 
-				if(bitsRemaining > 5)
+				if (bitsRemaining > 5)
 				{
 					mask = cValue << (bitsRemaining - 5);
 					curByte = (byte)(curByte | mask);
@@ -77,8 +77,8 @@ namespace Socialvoid.Security.Otp
 				}
 			}
 
-			//if we didn't end with a full byte
-			if(arrayIndex != byteCount)
+			// in the case we didn't end with a full byte
+			if (arrayIndex != byteCount)
 			{
 				returnArray[arrayIndex] = curByte;
 			}
@@ -93,7 +93,7 @@ namespace Socialvoid.Security.Otp
 		/// <exception cref="ArgumentException"/>
 		public static string ToString(byte[] input)
 		{
-			if(input == null || input.Length == 0)
+			if (input == null || input.Length == 0)
 			{
 				throw new ArgumentNullException("input");
 			}
@@ -109,7 +109,7 @@ namespace Socialvoid.Security.Otp
 				nextChar = (byte)(nextChar | (b >> (8 - bitsRemaining)));
 				returnArray[arrayIndex++] = ValueToChar(nextChar);
 
-				if(bitsRemaining < 4)
+				if (bitsRemaining < 4)
 				{
 					nextChar = (byte)((b >> (3 - bitsRemaining)) & 31);
 					returnArray[arrayIndex++] = ValueToChar(nextChar);
@@ -120,8 +120,8 @@ namespace Socialvoid.Security.Otp
 				nextChar = (byte)((b << bitsRemaining) & 31);
 			}
 
-			//if we didn't end with a full char
-			if(arrayIndex != charCount)
+			// in the case we didn't end with a full char
+			if (arrayIndex != charCount)
 			{
 				returnArray[arrayIndex++] = ValueToChar(nextChar);
 				while(arrayIndex != charCount) returnArray[arrayIndex++] = '='; //padding
@@ -137,19 +137,19 @@ namespace Socialvoid.Security.Otp
 		private static int CharToValue(char c)
 		{
 			// 65 - 90 == uppercase letters
-			if(c < 91 && c > 64)
+			if (c < 91 && c > 64)
 			{
 				return c - 65;
 			}
 
 			// 50 - 55 == numbers 2-7
-			if(c < 56 && c > 49)
+			if (c < 56 && c > 49)
 			{
 				return c - 24;
 			}
 
 			// 97 - 122 == lowercase letters
-			if(c < 123 && c > 96)
+			if (c < 123 && c > 96)
 			{
 				return c - 97;
 			}

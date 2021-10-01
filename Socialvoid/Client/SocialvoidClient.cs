@@ -399,7 +399,6 @@ namespace Socialvoid.Client
 		{
 			var otp = new Totp(Encoding.UTF8.GetBytes(secret));
 			return KeyGeneration.GetSha1(otp.ComputeTotp() + PrivateHash);;
-			//return null;
 		}
 
 		#endregion

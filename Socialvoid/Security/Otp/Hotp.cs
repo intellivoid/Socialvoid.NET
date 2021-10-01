@@ -59,7 +59,7 @@ namespace Socialvoid.Security.Otp
 		public Hotp(byte[] secretKey, OtpHashMode mode = OtpHashMode.Sha1, int hotpSize = 6)
 			: base(secretKey, mode)
 		{
-			if(hotpSize < 6 || hotpSize > 8)
+			if (hotpSize < 6 || hotpSize > 8)
 			{
 				throw new ArgumentOutOfRangeException(nameof(hotpSize), 
 					"The hotpSize must be between 6 and 8");
@@ -87,7 +87,7 @@ namespace Socialvoid.Security.Otp
 			: base(key, mode)
 		{
 			
-			if(hotpSize < 6 || hotpSize > 8)
+			if (hotpSize < 6 || hotpSize > 8)
 			{
 				throw new ArgumentOutOfRangeException(nameof(hotpSize), 
 					"The hotpSize must be between 6 and 8");

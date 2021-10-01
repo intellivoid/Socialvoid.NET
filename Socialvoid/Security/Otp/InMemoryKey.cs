@@ -79,10 +79,12 @@ namespace Socialvoid.Security.Otp
 		/// <param name="key">Plaintext key data</param>
 		public InMemoryKey(byte[] key)
 		{
-			if(!(key != null))
-				throw new ArgumentNullException("key");
-			if(!(key.Length > 0))
-				throw new ArgumentException("The key must not be empty");
+			if (key == null || key.Length == 0)
+			{
+				throw new ArgumentException("Key cannot be empty or null",
+					nameof(key));
+			}
+				
 
 			_keyLength = key.Length;
 			int paddedKeyLength = (int)Math.Ceiling((decimal)key.Length / (decimal)16) * 16;
