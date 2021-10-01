@@ -29,13 +29,13 @@ namespace Socialvoid.Security
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
 		[JsonPropertyName("session_id")]
-		public string SessionID { get; internal set; }
+		public string SessionID { get; set; }
 		/// <summary>
 		/// The Public Hash of the client used when establishing the session.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
 		[JsonPropertyName("client_public_hash")]
-		public string ClientPublicHash { get; internal set; }
+		public string ClientPublicHash { get; set; }
 		/// <summary>
 		/// The session challenge answer revolving around the client's
 		/// private hash, the same client used to establish the session.
