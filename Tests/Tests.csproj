@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 <!--
-  This file is part of SocialVoid.NET Project (https://github.com/Intellivoid/SocialVoid.NET).
-  Copyright (c) 2021 SocialVoid.NET Authors.
+  This file is part of Socialvoid.NET Project (https://github.com/Intellivoid/Socialvoid.NET).
+  Copyright (c) 2021 Socialvoid.NET Authors.
  
   This library is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -63,6 +63,7 @@
 	<ItemGroup>
 		<PackageReference Include="nunit" Version="3.12.0" />
     	<PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
+		<PackageReference Include="StreamJsonRpc" Version="2.8.21" />
     	<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
 	</ItemGroup>
 	<!--===================================================-->
@@ -76,8 +77,8 @@
 		<!--
 		
 		-->
-		<ProjectReference Include="..\SocialVoid\SocialVoid.csproj" />
-		<!--SocialVoid/SocialVoid.csproj-->
+		<ProjectReference Include="..\Socialvoid\Socialvoid.csproj" />
+		<!--Socialvoid/Socialvoid.csproj-->
 
 	</ItemGroup>
 	<!--
