@@ -42,7 +42,7 @@ namespace Socialvoid.Security
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
 		[JsonPropertyName("challenge_answer")]
-		public string ChallengeAnswer { get; internal set; }
+		public string ChallengeAnswer { get; set; }
 		#endregion
 		//-------------------------------------------------
 		#region static field's Region

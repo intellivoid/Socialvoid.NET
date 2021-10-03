@@ -163,7 +163,7 @@ namespace Socialvoid.Client
 		/// next jsonrpc request.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
-		protected string _otp;
+		protected string _otp_answer;
 		/// <summary>
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
@@ -282,7 +282,7 @@ namespace Socialvoid.Client
 			if (!string.IsNullOrEmpty(jresp.Result.ChallengeSecret))
 			{
 				_should_otp = true;
-				_otp = GetChallengeAnswer(jresp.Result.ChallengeSecret);
+				_otp_answer = GetChallengeAnswer(jresp.Result.ChallengeSecret);
 				// set challenege secret to null to avoid sending it again.
 				// this will avoid future conflicts in using old challenge secret.
 				jresp.Result.ChallengeSecret = null;
@@ -368,16 +368,17 @@ namespace Socialvoid.Client
 			if (IsOtpValid(otp))
 			{
 				args.Add(OtpKey, otp);
-				sessionID.ChallengeAnswer = otp;
+				//sessionID.ChallengeAnswer = otp;
 			}
-			else if (_should_otp && IsOtpValid(_otp))
+
+			if (_should_otp && IsOtpValid(_otp_answer))
 			{
 				// after adding otp answer to args, don't forget to set
 				// _should_otp to false (and _otp to null).
-				args.Add(OtpKey, _otp);
-				sessionID.ChallengeAnswer = _otp;
+				//args.Add(OtpKey, _challenge);
+				sessionID.ChallengeAnswer = _otp_answer;
 				_should_otp = false;
-				_otp = null;
+				_otp_answer = null;
 			}
 
 			var request = GetRpcRequest(AuthenticateUserMethod, args);
