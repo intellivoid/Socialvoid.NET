@@ -37,16 +37,35 @@ namespace Tests.Client
 			"4c7148caff498d24deee6c8325f1c15773d637ed76c3a4056e00b77b2beb3097", // public hash
 			"866d3218b239d39c174fa2b16f54e0fa58f9c69fce8c2d941c12a47a7bc75229", // private hash
 			"Linux", // platform
-			"Test .NET RCP Client", // the name
+			"Test .NET RPC Client", // the name
 			"1.0.0.0" // version
 		)]
 		public void AuthenticateUserTest(string publicHash, string privateHash, 
 			string platform, string name, string version)
 		{
-			var myClient = 
+			var myClient =
 				SocialvoidClient.GetClient(publicHash, 
 					privateHash, platform, name, version);
-			myClient.CreateSession();
+
+			try
+			{
+				myClient.CreateSession();
+			}
+			catch (Exception e)
+			{
+				NUnit.Framework.Assert.Fail("Exception thrown: " + e.Message);
+				return;
+			}
+			
+			try
+			{
+				myClient.GetTermsOfService();
+				var peer = myClient.Register("aliwoto", "12345678", "エイリ・ヲト");
+			}
+			catch (UsernameAlreadyExistsException)
+			{
+				Console.WriteLine("Username already exists");
+			}
 			myClient.AuthenticateUser("aliwoto", "12345678");
 		}
 

@@ -1,16 +1,35 @@
-using System;
-using System.Text.Json.Serialization;
-using System.Text.Json;
+/*
+ * This file is part of Socialvoid.NET Project (https://github.com/Intellivoid/Socialvoid.NET).
+ * Copyright (c) 2021 Socialvoid.NET Authors.
+ *
+ * This library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this source code of library. 
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
 
-namespace Socialvoid.JObjects
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
+using Socialvoid.SvObjects.Media;
+
+namespace Socialvoid.SvObjects
 {
 	/// <summary>
-	/// A <see cref="JRequest"/> object which contains basic information
-	/// about an error returned by the server.
+	/// A peer object provides a basic description and identification 
+	/// of a peer entity that can contain information used to display the peer
+	/// on the client or basic flags and properties of the peer to pre-determine
+	/// what actions are available for a peer.
 	/// <code> since: v0.0.0 </code>
 	/// </summary>
-	[Serializable]
-	public sealed class JRequest
+	public class HelpDocument
 	{
 		//-------------------------------------------------
 		#region Constant's Region
@@ -23,31 +42,23 @@ namespace Socialvoid.JObjects
 		//-------------------------------------------------
 		#region Properties Region
 		/// <summary>
-		/// The JSON-RPC version. Should be equal to "2.0".
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		[JsonPropertyName("jsonrpc")]
-		public string JsonRPC { get; set; } = "2.0";
-		/// <summary>
-		/// The error message.
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		[JsonPropertyName("method")]
-		public string Method { get; set; }
-		/// <summary>
-		/// The error message.
+		/// The ID of the session obtained when establishing a session.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
 		[JsonPropertyName("id")]
-		public Nullable<long> ID { get; set; }
+		public string ID { get; set; }
 		/// <summary>
-		/// The error message.
+		/// The ID of the session obtained when establishing a session.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
-		[JsonPropertyName("params")]
-		public JArgs Arguments { get; set; }
-
-		
+		[JsonPropertyName("text")]
+		public string Text { get; set; }
+		/// <summary>
+		/// The ID of the session obtained when establishing a session.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		[JsonPropertyName("entities")]
+		public object[] Entities { get; set; }
 		#endregion
 		//-------------------------------------------------
 		#region static field's Region
@@ -67,6 +78,13 @@ namespace Socialvoid.JObjects
 		#endregion
 		//-------------------------------------------------
 		#region Constructor's Region
+		/// <summary>
+		///
+		/// </summary>
+		public HelpDocument()
+		{
+
+		}
 		#endregion
 		//-------------------------------------------------
 		#region Destructor's Region
@@ -90,25 +108,11 @@ namespace Socialvoid.JObjects
 		#endregion
 		//-------------------------------------------------
 		#region ordinary Method's Region
-		/// <summary>
-		/// Changes the ID property of this value to <c>DateTime.Now.Ticks</c>.
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		public void ChangeID()
-		{
-			ID = DateTime.Now.Ticks;
-		}
+		// some methods here
 		#endregion
 		//-------------------------------------------------
 		#region Get Method's Region
-		/// <summary>
-		/// Serializes this request as a string.
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		public string Serialize()
-		{
-			return JsonSerializer.Serialize(this);
-		}
+		// some methods here
 		#endregion
 		//-------------------------------------------------
 		#region Set Method's Region
@@ -116,6 +120,7 @@ namespace Socialvoid.JObjects
 		#endregion
 		//-------------------------------------------------
 		#region static Method's Region
+		// some methods here
 		#endregion
 		//-------------------------------------------------
 	}

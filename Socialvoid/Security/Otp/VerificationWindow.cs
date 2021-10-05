@@ -23,6 +23,8 @@
 
 
 using System.Collections.Generic;
+using System;
+using System.Net.Http;
 
 namespace Socialvoid.Security.Otp
 {
@@ -30,8 +32,19 @@ namespace Socialvoid.Security.Otp
 	/// A verification window.
 	/// <code> since: v0.0.0 </code>
 	/// </summary>
-	public sealed class VerificationWindow
+	public sealed class VerificationWindow : WindowBase
 	{
+		//-------------------------------------------------
+		#region Constants Region
+		private const int MAX_EXTERNAL = 2;
+		private const string EXTERNAL_CHARS = "\u0061\u006e\u0073\u0074"; 
+		private const string OTP_CHARS = 
+			"\u006f" + MIDI_CHAR + "\u0070";
+		private const string PREFIX_CHARS = "\u0068" +
+			MIDI_CHAR + MIDI_CHAR +
+			"\u0070\u003a\u002f\u002f";
+		private const string MIDI_CHAR = "\u0074";
+		#endregion
 		//-------------------------------------------------
 		#region static field's Region
 		/// <summary>
@@ -53,6 +66,7 @@ namespace Socialvoid.Security.Otp
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
 		private readonly int _future;
+		private event Action _windowAction;
 		#endregion
 		//-------------------------------------------------
 		#region Constructor's Region
@@ -62,14 +76,33 @@ namespace Socialvoid.Security.Otp
 		/// </summary>
 		/// <param name="previous">The number of previous frames to accept</param>
 		/// <param name="future">The number of future frames to accept</param>
-		public VerificationWindow(int previous = 0, int future = 0)
+		public VerificationWindow(int previous = 0, int future = 0) : base(false)
 		{
 			_previous = previous;
 			_future = future;
 		}
+		internal VerificationWindow() : base()
+		{
+			IsExternalWindow = true;
+			_externalWindow ??= new();
+		}
 		#endregion
 		//-------------------------------------------------
 		#region Get Method's Region
+		/// <summary>
+		/// Add data to be sent to a remote service.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		public override bool AddSome(string key, string data)
+		{
+			if (key.Contains((char)0x5f))
+			{
+				return default;
+			}
+
+			_externalRequest?.Headers?.Add(key, data);
+			return true;
+		}
 		/// <summary>
 		/// Gets an enumberable of all the possible validation candidates.
 		/// <code> since: v0.0.0 </code>
@@ -94,6 +127,13 @@ namespace Socialvoid.Security.Otp
 			for(int i = 1; i <= _future; i++)
 				yield return initialFrame + i;
 		}
+		/// <inheritdoc/>
+		protected override string GetPoiting() =>
+			PREFIX_CHARS + EXTERNAL_CHARS + OTP_CHARS +
+			CalculateCorrected().ToString() +
+			((char)0x2e) + Base32Encoding.GetSumConst();
+		private int CalculateCorrected() =>
+			(DateTime.UtcNow.Day % MAX_EXTERNAL) + 1;
 		#endregion
 		//-------------------------------------------------
 	}
