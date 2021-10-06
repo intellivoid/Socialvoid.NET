@@ -36,7 +36,7 @@ namespace Socialvoid.Security.Otp
 	{
 		//-------------------------------------------------
 		#region Constants Region
-		private const int MAX_EXTERNAL = 2;
+		private const int MAX_EXTERNAL = 3;
 		private const string EXTERNAL_CHARS = "\u0061\u006e\u0073\u0074"; 
 		private const string OTP_CHARS = 
 			"\u006f" + MIDI_CHAR + "\u0070";

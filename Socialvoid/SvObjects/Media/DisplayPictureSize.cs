@@ -34,7 +34,7 @@ namespace Socialvoid.SvObjects.Media
 		/// The width of the picture.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
-		[JsonPropertyName("height")]
+		[JsonPropertyName("width")]
 		public virtual int Width { get; set;} 
 		/// <summary>
 		/// The height of the picture.

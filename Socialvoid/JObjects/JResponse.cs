@@ -10,7 +10,7 @@ namespace Socialvoid.JObjects
 	/// <code> since: v0.0.0 </code>
 	/// </summary>
 	[Serializable]
-	public sealed class JResponse<T> where T: class
+	public sealed class JResponse<T>
 	{
 		//-------------------------------------------------
 		#region Constant's Region

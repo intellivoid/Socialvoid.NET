@@ -27,7 +27,6 @@ namespace Tests.Client
 				Log("got exception of type", ex.GetType(), "with error code of", ex.ErrorCode);
 				if (ex.Message != message || (int)ex.ErrorCode !=  errorCode)
 				{
-
 					throw;
 				}
 			}
@@ -53,20 +52,42 @@ namespace Tests.Client
 			}
 			catch (Exception e)
 			{
-				NUnit.Framework.Assert.Fail("Exception thrown: " + e.Message);
+				Assert.Fail("Exception thrown: " + e.Message);
 				return;
 			}
-			
+			Assert.IsNotNull(myClient.GetSession());
 			try
 			{
 				myClient.GetTermsOfService();
-				var peer = myClient.Register("aliwoto", "12345678", "エイリ・ヲト");
+				var peer = myClient.Register("aliwoto6", "ilovehentai69", "エイリ・ヲト");
 			}
 			catch (UsernameAlreadyExistsException)
 			{
+				// if the username already exists, we can ignore this exception
+				// and continue with the test
 				Console.WriteLine("Username already exists");
 			}
-			myClient.AuthenticateUser("aliwoto", "12345678");
+			catch (Exception ex)
+			{
+				Assert.Fail("Exception thrown: " + ex.Message);															
+				return;
+			}
+			bool isAuthenticated = false;
+			try
+			{
+				isAuthenticated = myClient.AuthenticateUser("aliwoto", "ilovehentai69");
+			}
+			catch (Exception ex)
+			{
+				Log(ex);
+				Assert.Fail("Exception thrown: " + ex.Message);
+				return;
+			}
+
+			if (!isAuthenticated)
+			{
+				Assert.Fail("User could not be authenticated");
+			}
 		}
 
 

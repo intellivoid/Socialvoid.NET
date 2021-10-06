@@ -63,7 +63,7 @@ namespace Socialvoid.SvObjects
 		/// The ID of the session obtained when establishing a session.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
-		[JsonPropertyName("name")]
+		[JsonPropertyName("username")]
 		public string Username { get; set; }
 		/// <summary>
 		/// The ID of the session obtained when establishing a session.

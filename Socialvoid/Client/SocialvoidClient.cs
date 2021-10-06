@@ -217,7 +217,7 @@ namespace Socialvoid.Client
 		/// next jsonrpc request.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
-		protected string _otp_answer;
+		protected string _otp_challenge;
 		/// <summary>
 		/// the terms of service received from the socialvoid's server.
 		/// <code> since: v0.0.0 </code>
@@ -395,7 +395,7 @@ namespace Socialvoid.Client
 		/// <exception cref="TwoFactorAuthenticationRequiredException">
 		/// Thrown if two-factor authentication is required.
 		/// </exception>
-		public virtual void AuthenticateUser(string username, string password,
+		public virtual bool AuthenticateUser(string username, string password,
 			string otp = null, SessionIdentification sessionID = null)
 		{
 			if (sessionID == null)
@@ -431,31 +431,20 @@ namespace Socialvoid.Client
 				args.Add(OtpKey, otp);
 			}
 
-			if (_should_otp && IsOtpValid(_otp_answer))
+			CheckAnswer(sessionID);
+
+			var jresp = ParseContent<bool>(
+				GetMessage(AuthenticateUserMethod, args));
+			
+			if (jresp == null)
 			{
-				// after adding otp answer to args, don't forget to set
-				// _should_otp to false (and _otp to null).
-				//args.Add(OtpKey, _challenge);
-				sessionID.ChallengeAnswer = _otp_answer;
-				_should_otp = false;
-				_otp_answer = null;
+				// this shouldn't happen in normal cases.
+				throw new InvalidOperationException(
+					"received invalid response from server.");
 			}
 
-			var request = GetRpcRequest(AuthenticateUserMethod, args);
-			
-			var message = new HttpRequestMessage(HttpMethod.Post, _endpoint);
-			message.Content = SerializeContent(request);
-			message.Content.Headers.ContentType = _contentTypeValue;
-			var resp = HttpClient.Send(message);
-			var contentStr = ReadFromContent(resp.Content);
-			
-			Console.WriteLine(contentStr);
+			return jresp.Result;
 		}
-		
-		
-
-
-
 
 		/// <summary>
 		/// CreateSession method (session.create), establishes a new session
@@ -517,6 +506,11 @@ namespace Socialvoid.Client
 			SessionIdentification sessionID = null,
 			bool store = true)
 		{
+
+			if (password == null || password.Length < 8)
+			{
+				throw new ArgumentException("Password must be at least 8 characters long.");
+			}
 			if (sessionID == null)
 			{
 				if (_session == null)
@@ -545,9 +539,11 @@ namespace Socialvoid.Client
 				tosID = _termsOfService.ID;
 			}
 
+			CheckAnswer(sessionID);
+
 			JArgs args = new(){
 				{SessionIDKey, sessionID},
-				{tosID, tosID},
+				{ToSKey, tosID},
 				{ToSAgreeKey, true},
 				{UsernameKey, username},
 				{PasswordKey, password},
@@ -728,8 +724,7 @@ namespace Socialvoid.Client
 		protected internal JResponse<VType> ParseContent<VType>(
 			HttpRequestMessage message,
 			bool ex = true,
-			bool answerChallge = true)
-			where VType : class
+			bool answerChallege = true)
 		{
 			if (HttpClient == null)
 			{
@@ -741,7 +736,7 @@ namespace Socialvoid.Client
 				throw new InvalidOperationException("HttpClient.Send returned null");
 			}
 
-			if (!answerChallge)
+			if (!answerChallege)
 			{
 				// if we don't need to answer challenge, we can just return the
 				// response.
@@ -751,12 +746,37 @@ namespace Socialvoid.Client
 			if (jresp.Result is IChallenge result && result.HasSecret())
 			{
 				_should_otp = true;
-				_otp_answer = GetChallengeAnswer(result.GetChallengeSecret());
+				_otp_challenge = result.GetChallengeSecret();
+				//_otp_answer = GetChallengeAnswer(result.GetChallengeSecret());
 				// set challenege secret to null to avoid sending it again.
 				// this will avoid future conflicts in using old challenge secret.
 				result.DelSecret();
 			}
 			return jresp;
+		}
+		/// <summary>
+		/// Checks the <see cref="_should_otp"/> value of this client and
+		/// if it's <c>true</c>, it will set the 
+		/// <see cref="SessionIdentification.ChallengeAnswer"/> to 
+		/// the correct answer.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		protected virtual void CheckAnswer(SessionIdentification sessionID)
+		{
+			if (sessionID == null)
+			{
+				return;
+			}
+
+			if (_should_otp && IsOtpValid(_otp_challenge))
+			{
+				// after adding otp answer to args, don't forget to set
+				// _should_otp to false (and _otp to null).
+				//args.Add(OtpKey, _challenge);
+				sessionID.ChallengeAnswer = GetChallengeAnswer(_otp_challenge);
+				//_should_otp = false;
+				//_otp_challenge = null;
+			}
 		}
 		#endregion
 		//-------------------------------------------------
@@ -885,7 +905,6 @@ namespace Socialvoid.Client
 		protected internal static JResponse<VType> ParseContent<VType>(
 			HttpContent content,
 			bool ex = true)
-			where VType : class
 		{
 			var jresp = JResponse<VType>.Deserialize(ReadFromContent(content));
 			if (ex && jresp.HasError())

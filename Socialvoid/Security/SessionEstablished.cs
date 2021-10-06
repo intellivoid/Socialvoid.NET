@@ -113,7 +113,7 @@ namespace Socialvoid.Security
 		/// otherwise a valid challenge secret.
 		/// </returns>
 		public string GetChallengeSecret() => 
-			HasSecret() ? null : ChallengeSecret;
+			!HasSecret() ? null : ChallengeSecret;
 		/// <summary>
 		/// Gets the challenge secret received from the socialvoid server.
 		/// <code> since: v0.0.0 </code>

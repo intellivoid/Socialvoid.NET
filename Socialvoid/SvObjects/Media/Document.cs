@@ -72,10 +72,10 @@ namespace Socialvoid.SvObjects.Media
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
 		[JsonPropertyName("created_timestamp")]
-		public virtual long CreatedAt
+		public virtual string CreatedAt
 		{
-			get => _createdAt.Ticks;
-			set => _createdAt = new DateTime(value);
+			get => _createdAt.Ticks.ToString();
+			set => _createdAt = new DateTime(Convert.ToInt64(value));
 		}
 		#endregion
 		//-------------------------------------------------
@@ -123,7 +123,7 @@ namespace Socialvoid.SvObjects.Media
 		/// </summary>
 		public System.DateTime GetTimeStamp() => 
 			_createdAt != DateTime.MinValue ? _createdAt:
-			new(CreatedAt);
+			new(Convert.ToInt64(CreatedAt));
 		#endregion
 		//-------------------------------------------------
 	}
