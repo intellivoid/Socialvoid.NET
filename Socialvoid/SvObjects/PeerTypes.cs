@@ -16,42 +16,45 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// <summary>
-/// Peer Types indicates the account type that's registered to the server,
-/// some actions may be restricted depending on the peer type.
-/// <code> Since: v0.0.0 </code>
-/// </summary>
-public enum PeerTypes
+namespace Socialvoid.SvObjects
 {
-	//-------------------------------------------------
-	#region general types
 	/// <summary>
-	/// The default value of an <see cref="PeerTypes"/>, which means
-	/// the peer type is undefined (or is unsupported by this version of
-	/// library).
-	/// In the case where our client received this type, we should show user
-	/// the "please update your client" message.
+	/// Peer Types indicates the account type that's registered to the server,
+	/// some actions may be restricted depending on the peer type.
 	/// <code> Since: v0.0.0 </code>
 	/// </summary>
-	None = 0,
-	#endregion
-	//-------------------------------------------------
-	#region Another styling
-	/// <summary>
-	/// Normal user account.
-	/// <code> Since: v0.0.0 </code>
-	/// </summary>
-	User = 1,
-	/// <summary>
-	/// A bot account that performs automated actions on the network.
-	/// <code> Since: v0.0.0 </code>
-	/// </summary>
-	Bot = 2,
-	/// <summary>
-	/// A proxy account that mirrors content from another platform.
-	/// <code> Since: v0.0.0 </code>
-	/// </summary>
-	Proxy = 3,
-	#endregion
-	//-------------------------------------------------
+	public enum PeerTypes
+	{
+		//-------------------------------------------------
+		#region general types
+		/// <summary>
+		/// The default value of an <see cref="PeerTypes"/>, which means
+		/// the peer type is undefined (or is unsupported by this version of
+		/// library).
+		/// In the case where our client received this type, we should show user
+		/// the "please update your client" message.
+		/// <code> Since: v0.0.0 </code>
+		/// </summary>
+		None = 0,
+		#endregion
+		//-------------------------------------------------
+		#region Another styling
+		/// <summary>
+		/// Normal user account.
+		/// <code> Since: v0.0.0 </code>
+		/// </summary>
+		User = 1,
+		/// <summary>
+		/// A bot account that performs automated actions on the network.
+		/// <code> Since: v0.0.0 </code>
+		/// </summary>
+		Bot = 2,
+		/// <summary>
+		/// A proxy account that mirrors content from another platform.
+		/// <code> Since: v0.0.0 </code>
+		/// </summary>
+		Proxy = 3,
+		#endregion
+		//-------------------------------------------------
+	}
 }

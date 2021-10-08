@@ -16,38 +16,41 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// <summary>
-/// File types indicate the content type of the file, if the server is
-/// unable to determine the file type then it will default to DOCUMENT.
-/// <code> Since: v0.0.0 </code>
-/// </summary>
-public enum FileTypes
+namespace Socialvoid.SvObjects
 {
-	//-------------------------------------------------
-	#region general types
 	/// <summary>
-	/// The default value of an <see cref="FileTypes"/>.
+	/// File types indicate the content type of the file, if the server is
+	/// unable to determine the file type then it will default to DOCUMENT.
 	/// <code> Since: v0.0.0 </code>
 	/// </summary>
-	Document = 0,
-	#endregion
-	//-------------------------------------------------
-	#region Another styling
-	/// <summary>
-	/// The file is an image file type.
-	/// <code> Since: v0.0.0 </code>
-	/// </summary>
-	Photo = 1,
-	/// <summary>
-	/// The file is an video file type.
-	/// <code> Since: v0.0.0 </code>
-	/// </summary>
-	Video = 2,
-	/// <summary>
-	/// The file is an audio file type.
-	/// <code> Since: v0.0.0 </code>
-	/// </summary>
-	Audio = 3,
-	#endregion
-	//-------------------------------------------------
+	public enum FileTypes
+	{
+		//-------------------------------------------------
+		#region general types
+		/// <summary>
+		/// The default value of an <see cref="FileTypes"/>.
+		/// <code> Since: v0.0.0 </code>
+		/// </summary>
+		Document = 0,
+		#endregion
+		//-------------------------------------------------
+		#region Another styling
+		/// <summary>
+		/// The file is an image file type.
+		/// <code> Since: v0.0.0 </code>
+		/// </summary>
+		Photo = 1,
+		/// <summary>
+		/// The file is an video file type.
+		/// <code> Since: v0.0.0 </code>
+		/// </summary>
+		Video = 2,
+		/// <summary>
+		/// The file is an audio file type.
+		/// <code> Since: v0.0.0 </code>
+		/// </summary>
+		Audio = 3,
+		#endregion
+		//-------------------------------------------------
+	}
 }
