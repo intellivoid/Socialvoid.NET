@@ -24,9 +24,10 @@ using Socialvoid.JObjects;
 using Socialvoid.Security;
 using Socialvoid.Security.Otp;
 using Socialvoid.SvObjects;
+using Socialvoid.Errors.RPCErrors;
 using Socialvoid.Errors.ServerErrors;
-using Socialvoid.Errors.AuthenticationErrors;
 using Socialvoid.Errors.ValidationErrors;
+using Socialvoid.Errors.AuthenticationErrors;
 using MType = System.Net.Http.Headers.MediaTypeHeaderValue;
 
 namespace Socialvoid.Client
@@ -125,6 +126,11 @@ namespace Socialvoid.Client
 		/// </summary>
 		protected const string RegisterMethod = "session.register";
 		/// <summary>
+		/// <c>authenticate_user</c> method value.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		protected const string GetSessionMethod = "session.get";
+		/// <summary>
 		/// <c>get_terms_of_service</c> method value.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
@@ -206,6 +212,11 @@ namespace Socialvoid.Client
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
 		protected internal SessionEstablished _session;
+		/// <summary>
+		/// Session info object of this client.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		protected internal Session _sessionInfo;
 		/// <summary>
 		/// if the client should send an otp answer in the next request,
 		/// this field should be set to <c>true</c>.
@@ -289,7 +300,7 @@ namespace Socialvoid.Client
 		// some methods here
 		#endregion
 		//-------------------------------------------------
-		#region ordinary Method's Region
+		#region Session Method's Region
 		/// <summary>
 		/// CreateSession method (session.create), establishes a new session
 		/// to the network.
@@ -561,6 +572,81 @@ namespace Socialvoid.Client
 			return jresp.Result;
 		}
 		/// <summary>
+		/// GetSession method (session.get), Returns information about the
+		/// current session identified by the SessionIdentification parameter.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		/// <param name="sessionID">
+		/// The Session Identification object. 
+		/// (optional if and only if this client has already established
+		/// a session OR <see cref="AutoSession"/> is set to <c>true</c>).
+		/// </param>
+		/// <param name="store">
+		/// set it to <c>true</c> if you want to store the session in the
+		/// client.
+		/// </param>
+		/// <exception cref="InternalServerErrorException"/>
+		/// <exception cref="InvalidParamsException"/>
+		/// <exception cref="InvalidSessionIdentificationException"/>
+		/// <exception cref="BadSessionChallengeAnswerException"/>
+		/// <exception cref="SessionExpiredException"/>
+		/// <exception cref="SessionNotFoundException"/>
+		/// <exception cref="InvalidClientPublicHashException"/>
+		public virtual Session GetSession(
+			SessionIdentification sessionID = null,
+			bool store = true)
+		{
+			if (sessionID == null)
+			{
+				if (_session == null)
+				{
+					if (!AutoSession)
+					{
+						throw new InvalidOperationException("SessionID is not created.");
+					}
+					_session = CreateSession();
+				}
+
+				sessionID = new()
+				{
+					SessionID = _session.SessionID,
+					ClientPublicHash = PublicHash
+				};
+			}
+
+			JArgs args = new(){
+				{SessionIDKey, sessionID},
+			};
+
+			CheckAnswer(sessionID);
+
+			var jresp = ParseContent<Session>(
+				GetMessage(GetSessionMethod, args));
+			
+			if (jresp == null)
+			{
+				// this shouldn't happen in normal cases.
+				throw new InvalidOperationException(
+					"received invalid response from server.");
+			}
+
+			if (store)
+			{
+				_sessionInfo = jresp.Result;
+			}
+
+			return jresp.Result;
+		}
+		/// <summary>
+		/// returns a challenge's answer using the session's challenge secret.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		protected internal virtual string GetChallengeAnswer(string secret) =>
+			KeyGeneration.GetChallengeAnswer(secret, PrivateHash);
+		#endregion
+		//-------------------------------------------------
+		#region Get Method's Region
+		/// <summary>
 		/// GetTermsOfService (help.get_terms_of_service), Returns a 
 		/// HelpDocument object that contains information about the 
 		/// Terms of Services (ToS) for the network.
@@ -582,26 +668,14 @@ namespace Socialvoid.Client
 			return jresp.Result;
 		}
 
-
-		/// <summary>
-		/// returns a challenge's answer using the session's challenge secret.
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		protected internal virtual string GetChallengeAnswer(string secret) =>
-			KeyGeneration.GetChallengeAnswer(secret, PrivateHash);
-		#endregion
-		//-------------------------------------------------
-		#region Get Method's Region
 		/// <summary>
 		/// Gets the session of this <see cref="SocialvoidClient"/> if and only
 		/// if you have already established a session (or has loaded it from a file);
 		/// oterwise it will just return a null object instead of throwing an exception.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
-		public virtual SessionEstablished GetSession()
-		{
-			return _session;
-		}
+		public virtual SessionEstablished GetSessionVariable() =>
+			_session;
 		/// <summary>
 		/// <code> since: v0.0.0 </code>
 		/// </summary>

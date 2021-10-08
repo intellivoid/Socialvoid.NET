@@ -30,7 +30,7 @@ namespace Socialvoid.Security
 	/// will cause the request to fail as it's validated upon request.
 	/// <code> since: v0.0.0 </code>
 	/// </summary>
-	public sealed class SessionIdentification
+	public sealed class SessionIdentification: IIdentitiable<string>
 	{
 		//-------------------------------------------------
 		#region Constant's Region
@@ -114,7 +114,21 @@ namespace Socialvoid.Security
 		#endregion
 		//-------------------------------------------------
 		#region Get Method's Region
-		// some methods here
+		/// <summary>
+		/// Checks if the ID of this object is valid.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		/// <returns>
+		/// <c>true</c> if the ID is valid;
+		/// otherwise, <c>false</c>.
+		/// </returns>
+		public bool HasValidID() =>
+			!string.IsNullOrWhiteSpace(SessionID);
+		/// <summary>
+		/// Returns the ID of this <see cref="SessionIdentification"/> object.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		public string GetID() => SessionID;
 		#endregion
 		//-------------------------------------------------
 		#region Set Method's Region

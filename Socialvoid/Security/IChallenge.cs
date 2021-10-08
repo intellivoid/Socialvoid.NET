@@ -26,6 +26,8 @@ namespace Socialvoid.Security
 	/// </summary>
 	public interface IChallenge
 	{
+		//-------------------------------------------------
+		#region Get Method's Region
 		/// <summary>
 		/// Checks if the challenge is valid.
 		/// <code> since: v0.0.0 </code>
@@ -49,5 +51,7 @@ namespace Socialvoid.Security
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
 		void DelSecret();
+		#endregion
+		//-------------------------------------------------
 	}
 }

@@ -16,27 +16,33 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
+
 namespace Socialvoid.Security
 {
 	/// <summary>
-	/// Interface for sending simple data to a service which
-	/// can be used to send data to a remote service.
+	/// Interface for classes and structs which provides a valid ID.
 	/// <code> since: v0.0.0 </code>
 	/// </summary>
-	public interface ISender
+	public interface IIdentitiable<T>
+		where T: IComparable, IConvertible
 	{
 		//-------------------------------------------------
 		#region Get Method's Region
 		/// <summary>
-		/// Sends data to a remote service.
+		/// Checks if the ID of this object is valid.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
-		string Send();
+		/// <returns>
+		/// <c>true</c> if the ID is valid;
+		/// otherwise, <c>false</c>.
+		/// </returns>
+		bool HasValidID();
 		/// <summary>
-		/// Add data to be sent to a remote service.
+		/// Returns the ID of this <see cref="IIdentitiable{T}"/> object.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
-		bool AddSome(string key, string data);
+		T GetID();
 		#endregion
 		//-------------------------------------------------
 	}

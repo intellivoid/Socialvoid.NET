@@ -49,6 +49,9 @@ namespace Tests.Client
 			try
 			{
 				myClient.CreateSession();
+				var session = myClient.GetSession();
+				Assert.IsNotNull(session);
+				Assert.IsNotNull(session.SessionID);
 			}
 			catch (Exception e)
 			{
@@ -60,6 +63,8 @@ namespace Tests.Client
 			{
 				myClient.GetTermsOfService();
 				var peer = myClient.Register("aliwoto6", "ilovehentai69", "エイリ・ヲト");
+				Assert.IsNotNull(peer);
+				Log(peer.Name);
 			}
 			catch (UsernameAlreadyExistsException)
 			{
@@ -76,6 +81,14 @@ namespace Tests.Client
 			try
 			{
 				isAuthenticated = myClient.AuthenticateUser("aliwoto", "ilovehentai69");
+				if (isAuthenticated)
+				{
+					var session = myClient.GetSession();
+					Assert.IsNotNull(session);
+					Assert.IsNotNull(session.SessionID);
+					Log("created: ", session.Created);
+					Log("Expires: ", session.Expires);
+				}
 			}
 			catch (Exception ex)
 			{

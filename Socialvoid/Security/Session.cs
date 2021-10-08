@@ -18,221 +18,103 @@
 
 using System;
 using System.Text.Json.Serialization;
-using Socialvoid.Security;
+using Socialvoid.SvObjects;
 
-namespace Socialvoid.SvObjects.Media
+namespace Socialvoid.Security
 {
 	/// <summary>
-	/// A document object contains basic information about the file associated
-	/// with the document and the document ID used to retrieve the document
-	/// from the CDN Server.
+	/// A <see cref="SessionEstablished"/> object contains basic information
+	/// about the session that the server has created for us.
 	/// <code> since: v0.0.0 </code>
 	/// </summary>
-	public class Document: IIdentitiable<string>, IFlagable<string>
+	public sealed class Session: IIdentitiable<string>, IFlagable<string>
 	{
 		//-------------------------------------------------
 		#region Constant's Region
-		/// <summary>
-		/// The file is a general file, it doesn't consist of any special type
-		/// that was detected by the server.
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		public const string DocumentTypeStr = "DOCUMENT";
-		/// <summary>
-		/// The file is an image file type.
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		public const string PhotoTypeStr = "PHOTO";
-		/// <summary>
-		/// The file is an video file type.
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		public const string VideoTypeStr = "VIDEO";
-		/// <summary>
-		/// The file is an audio file type.
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		public const string AudioTypeStr = "AUDIO";
+		// some members here
+		#endregion
+		//-------------------------------------------------
+		#region static Properties Region
+		// some members here
 		#endregion
 		//-------------------------------------------------
 		#region Properties Region
 		/// <summary>
-		/// The width of the picture.
+		/// The ID of the session obtained when establishing a session.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
 		[JsonPropertyName("id")]
-		public virtual string ID { get; set;}
+		public string SessionID { get; set; }
 		/// <summary>
-		/// The height of the picture.
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		[JsonPropertyName("file_mime")]
-		public virtual string MimeType { get; set; }
-		/// <summary>
-		/// The height of the picture.
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		[JsonPropertyName("file_name")]
-		public virtual string FileName { get; set; }
-		/// <summary>
-		/// The height of the picture.
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		[JsonPropertyName("file_size")]
-		public virtual int FileSize { get; set; }
-		/// <summary>
-		/// The height of the picture.
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		[JsonPropertyName("file_type")]
-		public virtual string FileType
-		{
-			get => _typeStr;
-			set
-			{
-				switch (value)
-				{
-					case DocumentTypeStr:
-						_type = FileTypes.Document;
-						break;
-					case PhotoTypeStr:
-						_type = FileTypes.Photo;
-						break;
-					case VideoTypeStr:
-						_type = FileTypes.Video;
-						break;
-					case AudioTypeStr:
-						_type = FileTypes.Audio;
-						break;
-					default:
-						_invalidType = true;
-						break;
-				}
-				_typeStr = value;
-			}
-		}
-		/// <summary>
-		/// The height of the picture.
+		/// An array of flags that has been set to this session.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
 		[JsonPropertyName("flags")]
-		public virtual string[] Flags { get; set; }
+		public string[] Flags { get; set; }
 		/// <summary>
-		/// The Unix Timestamp for when this document was first created.
+		/// Indicates if the session is currently authenticated to a user.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
-		[JsonPropertyName("created_timestamp")]
-		public virtual string CreatedAt
-		{
-			get => _createdAt.Ticks.ToString();
-			set => _createdAt = new DateTime(Convert.ToInt64(value));
-		}
+		[JsonPropertyName("authenticated")]
+		public bool Authenticated { get; set; }
+		/// <summary>
+		/// The Unix Timestamp for when this session was first created.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		[JsonPropertyName("created")]
+		public long Created { get; set; }
+		/// <summary>
+		/// The Unix Timestamp for when this session expires.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		[JsonPropertyName("expires")]
+		public long Expires { get; set; }
+		#endregion
+		//-------------------------------------------------
+		#region static field's Region
+		// some members here
 		#endregion
 		//-------------------------------------------------
 		#region field's Region
-		private bool _invalidType;
-		private string _typeStr;
-		private FileTypes _type;
-		private long _ticks;
-		private DateTime _createdAt = DateTime.MinValue;
+		// some members here
+		#endregion
+		//-------------------------------------------------
+		#region static event field's Region
+		// some members here
+		#endregion
+		//-------------------------------------------------
+		#region event field's Region
+		// some members here
 		#endregion
 		//-------------------------------------------------
 		#region Constructor's Region
-		/// <summary>
-		/// Creates a new instance of a <see cref="Document"/>.
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		public Document()
-		{
-
-		}
+		#endregion
+		//-------------------------------------------------
+		#region Destructor's Region
+		// some members here
+		#endregion
+		//-------------------------------------------------
+		#region Initialize Method's Region
+		// some methods here
+		#endregion
+		//-------------------------------------------------
+		#region Graphical Method's Region
+		// some methods here
+		#endregion
+		//-------------------------------------------------
+		#region event Method's Region
+		// some methods here
+		#endregion
+		//-------------------------------------------------
+		#region overrided Method's Region
+		// some methods here
+		#endregion
+		//-------------------------------------------------
+		#region ordinary Method's Region
+		
 		#endregion
 		//-------------------------------------------------
 		#region Get Method's Region
-		/// <summary>
-		/// 
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		public FileTypes GetEnumFileType() => _type;
-		/// <summary>
-		/// Returns the type of this file as a string.
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		/// <returns>
-		/// the type of this file as <see cref="string"/>.
-		/// </returns>
-		public virtual string GetStringType() => _typeStr;
-		/// <summary>
-		/// Checks if the type of this file is 
-		/// valid/supported by this client.
-		/// or not.
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		/// <returns>
-		/// <c>true</c> if the type is valid and supported;
-		/// otherwise, <c>false</c>.
-		/// </returns>
-		public virtual bool IsTypeValid() => !_invalidType;
-		/// <summary>
-		/// Checks if the file type is document or not.
-		/// Document type file is a general file, it doesn't consist of any 
-		/// special type that was detected by the server.
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		/// <returns>
-		/// <c>true</c> if the file type is considered as a document;
-		/// otherwise, <c>false</c>.
-		/// </returns>
-		public virtual bool IsDocumentType() => _type == FileTypes.Document;
-		/// <summary>
-		/// Checks if the file type is photo or not.
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		/// <returns>
-		/// <c>true</c> if the file type is considered as a photo;
-		/// otherwise, <c>false</c>.
-		/// </returns>
-		public virtual bool IsPhotoType() => _type == FileTypes.Photo;
-		/// <summary>
-		/// Checks if the file type is video or not.
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		/// <returns>
-		/// <c>true</c> if the file type is considered as a video;
-		/// otherwise, <c>false</c>.
-		/// </returns>
-		public virtual bool IsVideoType() => _type == FileTypes.Video;
-		/// <summary>
-		/// Checks if the file type is audio or not.
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		/// <returns>
-		/// <c>true</c> if the file type is considered as an audio;
-		/// otherwise, <c>false</c>.
-		/// </returns>
-		public virtual bool IsAudioType() => _type == FileTypes.Audio;
-		/// <summary>
-		/// converts file size to KB.
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		public float ConvertToKB() => FileSize / 1024f;
-		/// <summary>
-		/// converts file size to MB.
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		public float ConvertToMB() => ConvertToKB() / 1024f;
-		/// <summary>
-		/// converts file size to GB.
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		public float ConvertToGB() => ConvertToMB() / 1024f;
-		/// <summary>
-		/// converts file size to GB.
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		public System.DateTime GetTimeStamp() => 
-			_createdAt != DateTime.MinValue ? _createdAt:
-			new(Convert.ToInt64(CreatedAt));
 		/// <summary>
 		/// Checks if the ID of this object is valid.
 		/// <code> since: v0.0.0 </code>
@@ -242,12 +124,12 @@ namespace Socialvoid.SvObjects.Media
 		/// otherwise, <c>false</c>.
 		/// </returns>
 		public bool HasValidID() =>
-			!string.IsNullOrWhiteSpace(ID);
+			!string.IsNullOrWhiteSpace(SessionID);
 		/// <summary>
-		/// Returns the ID of this <see cref="Document"/> object.
+		/// Returns the ID of this <see cref="Session"/> object.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
-		public string GetID() => ID;
+		public string GetID() => SessionID;
 		/// <summary>
 		/// Returns the flags of this object.
 		/// <code> since: v0.0.0 </code>
@@ -424,6 +306,13 @@ namespace Socialvoid.SvObjects.Media
 			}
 			return false;
 		}
+		#endregion
+		//-------------------------------------------------
+		#region Set Method's Region
+		// some methods here
+		#endregion
+		//-------------------------------------------------
+		#region static Method's Region
 		#endregion
 		//-------------------------------------------------
 	}

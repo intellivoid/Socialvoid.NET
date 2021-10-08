@@ -18,7 +18,7 @@
 
 using System.Collections.Generic;
 
-namespace Socialvoid.SvObjects
+namespace Socialvoid.SvObjects.Math
 {
 	/// <summary>
 	/// ListW is a wrapper for <see cref="List{T}"/> that allows for the use

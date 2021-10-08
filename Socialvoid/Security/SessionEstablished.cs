@@ -25,7 +25,8 @@ namespace Socialvoid.Security
 	/// about the session that the server has created for us.
 	/// <code> since: v0.0.0 </code>
 	/// </summary>
-	public sealed class SessionEstablished : IChallenge
+	public sealed class SessionEstablished: 
+		IChallenge, IIdentitiable<string>
 	{
 		//-------------------------------------------------
 		#region Constant's Region
@@ -123,6 +124,21 @@ namespace Socialvoid.Security
 		/// </returns>
 		public bool HasSecret() => 
 			!string.IsNullOrWhiteSpace(ChallengeSecret);
+		/// <summary>
+		/// Checks if the ID of this object is valid.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		/// <returns>
+		/// <c>true</c> if the ID is valid;
+		/// otherwise, <c>false</c>.
+		/// </returns>
+		public bool HasValidID() =>
+			!string.IsNullOrWhiteSpace(SessionID);
+		/// <summary>
+		/// Returns the ID of this <see cref="SessionEstablished"/> object.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		public string GetID() => SessionID;
 		#endregion
 		//-------------------------------------------------
 		#region Set Method's Region

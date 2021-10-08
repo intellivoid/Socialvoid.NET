@@ -17,19 +17,17 @@
  */
 
 using System.Text.Json.Serialization;
-using Socialvoid.SvObjects.Text;
-using Socialvoid.Security;
 
-namespace Socialvoid.SvObjects
+namespace Socialvoid.SvObjects.Server
 {
 	/// <summary>
-	/// A peer object provides a basic description and identification 
-	/// of a peer entity that can contain information used to display the peer
-	/// on the client or basic flags and properties of the peer to pre-determine
-	/// what actions are available for a peer.
+	/// The <see cref="ServerInformation"/> object is a simple object that gives
+	/// details about the server's attributes and limits or location
+	/// of other servers that the client should communicate to for other
+	/// purposes such as a CDN.
 	/// <code> since: v0.0.0 </code>
 	/// </summary>
-	public class HelpDocument: IIdentitiable<string>
+	public class ServerInformation
 	{
 		//-------------------------------------------------
 		#region Constant's Region
@@ -42,23 +40,46 @@ namespace Socialvoid.SvObjects
 		//-------------------------------------------------
 		#region Properties Region
 		/// <summary>
-		/// The ID of the session obtained when establishing a session.
+		/// The name of the network, eg; "Socialvoid".
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
-		[JsonPropertyName("id")]
-		public string ID { get; set; }
+		[JsonPropertyName("network_name")]
+		public string NetworkName { get; set; }
 		/// <summary>
-		/// The ID of the session obtained when establishing a session.
+		/// The version of the protocol standard that the server is using, eg; "1.0"
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
-		[JsonPropertyName("text")]
-		public string Text { get; set; }
+		[JsonPropertyName("protocol_version")]
+		public string ProtocolVersion { get; set; }
 		/// <summary>
-		/// The ID of the session obtained when establishing a session.
+		/// The HTTP URL Endpoint for the CDN server of the network
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
-		[JsonPropertyName("entities")]
-		public TextEntity[] Entities { get; set; }
+		[JsonPropertyName("cdn_server")]
+		public string AddressCDN { get; set; }
+		/// <summary>
+		/// The maximum size of a file that you can upload
+		/// to the CDN Server (in bytes)
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		[JsonPropertyName("upload_max_file_size")]
+		public int MaxUploadSize { get; set; }
+		/// <summary>
+		/// The maximum time-to-live (in seconds) that an unauthorized
+		/// session may have. The server will often reset the expiration
+		/// whenever the session is used.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		[JsonPropertyName("unauthorized_session_ttl	")]
+		public int UnauthorizedSessionTTL { get; set; }
+		/// <summary>
+		/// The maximum time-to-live (in seconds) that an authorized
+		/// session may have. The server will often reset the expiration
+		/// whenever the session is used.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		[JsonPropertyName("authorized_session_ttl")]
+		public int SessionTTL { get; set; }
 		#endregion
 		//-------------------------------------------------
 		#region static field's Region
@@ -81,7 +102,7 @@ namespace Socialvoid.SvObjects
 		/// <summary>
 		///
 		/// </summary>
-		public HelpDocument()
+		public ServerInformation()
 		{
 
 		}
@@ -112,21 +133,7 @@ namespace Socialvoid.SvObjects
 		#endregion
 		//-------------------------------------------------
 		#region Get Method's Region
-		/// <summary>
-		/// Returns the ID of this <see cref="HelpDocument"/> object.
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		public string GetID() => ID;
-		/// <summary>
-		/// Checks if the ID of this object is valid.
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		/// <returns>
-		/// <c>true</c> if the ID is valid;
-		/// otherwise, <c>false</c>.
-		/// </returns>
-		public bool HasValidID() =>
-			!string.IsNullOrWhiteSpace(ID);
+		// some methods here
 		#endregion
 		//-------------------------------------------------
 		#region Set Method's Region
