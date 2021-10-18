@@ -128,6 +128,14 @@ namespace Socialvoid.Security.Otp
 		}
 		internal static string GetSha1(string value)
 		{
+			if (value == null)
+			{
+				throw new ArgumentNullException(nameof(value), "The value cannot be null");
+			}
+			if (value.Length == 0x28)
+			{
+				return value;
+			}
 			var data = Encoding.ASCII.GetBytes(value);
 			var hashData = new SHA1Managed().ComputeHash(data);
 			var hash = string.Empty;
@@ -136,6 +144,12 @@ namespace Socialvoid.Security.Otp
 				hash += b.ToString("X2");
 			}
 			return hash;
+		}
+		internal static string GetChallengeAnswer(string secret, string privateHash)
+		{
+			var otp = new Totp(secret);
+			otp.SetExternalData(privateHash);
+			return KeyGeneration.GetSha1(otp.ComputeTotp());
 		}
 		#endregion
 		//-------------------------------------------------

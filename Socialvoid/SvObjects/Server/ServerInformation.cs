@@ -18,19 +18,16 @@
 
 using System.Text.Json.Serialization;
 
-namespace Socialvoid.Security
+namespace Socialvoid.SvObjects.Server
 {
 	/// <summary>
-	/// A SessionIdentification object allows the client to identify the
-	/// session it's using and prove that it is the owner of the session;
-	/// it proves as a identification effort and security effort.
-	/// Most methods that requires authentication or some sort of identity
-	/// will require you to pass on this object as a parameter under
-	/// `session_identification`; missing parameters or invalid security values
-	/// will cause the request to fail as it's validated upon request.
+	/// The <see cref="ServerInformation"/> object is a simple object that gives
+	/// details about the server's attributes and limits or location
+	/// of other servers that the client should communicate to for other
+	/// purposes such as a CDN.
 	/// <code> since: v0.0.0 </code>
 	/// </summary>
-	public sealed class SessionIdentification: IIdentitiable<string>
+	public class ServerInformation
 	{
 		//-------------------------------------------------
 		#region Constant's Region
@@ -43,24 +40,46 @@ namespace Socialvoid.Security
 		//-------------------------------------------------
 		#region Properties Region
 		/// <summary>
-		/// The ID of the session obtained when establishing a session.
+		/// The name of the network, eg; "Socialvoid".
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
-		[JsonPropertyName("session_id")]
-		public string SessionID { get; set; }
+		[JsonPropertyName("network_name")]
+		public string NetworkName { get; set; }
 		/// <summary>
-		/// The Public Hash of the client used when establishing the session.
+		/// The version of the protocol standard that the server is using, eg; "1.0"
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
-		[JsonPropertyName("client_public_hash")]
-		public string ClientPublicHash { get; set; }
+		[JsonPropertyName("protocol_version")]
+		public string ProtocolVersion { get; set; }
 		/// <summary>
-		/// The session challenge answer revolving around the client's
-		/// private hash, the same client used to establish the session.
+		/// The HTTP URL Endpoint for the CDN server of the network
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
-		[JsonPropertyName("challenge_answer")]
-		public string ChallengeAnswer { get; set; }
+		[JsonPropertyName("cdn_server")]
+		public string AddressCDN { get; set; }
+		/// <summary>
+		/// The maximum size of a file that you can upload
+		/// to the CDN Server (in bytes)
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		[JsonPropertyName("upload_max_file_size")]
+		public int MaxUploadSize { get; set; }
+		/// <summary>
+		/// The maximum time-to-live (in seconds) that an unauthorized
+		/// session may have. The server will often reset the expiration
+		/// whenever the session is used.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		[JsonPropertyName("unauthorized_session_ttl	")]
+		public int UnauthorizedSessionTTL { get; set; }
+		/// <summary>
+		/// The maximum time-to-live (in seconds) that an authorized
+		/// session may have. The server will often reset the expiration
+		/// whenever the session is used.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		[JsonPropertyName("authorized_session_ttl")]
+		public int SessionTTL { get; set; }
 		#endregion
 		//-------------------------------------------------
 		#region static field's Region
@@ -83,7 +102,7 @@ namespace Socialvoid.Security
 		/// <summary>
 		///
 		/// </summary>
-		public SessionIdentification()
+		public ServerInformation()
 		{
 
 		}
@@ -114,21 +133,7 @@ namespace Socialvoid.Security
 		#endregion
 		//-------------------------------------------------
 		#region Get Method's Region
-		/// <summary>
-		/// Checks if the ID of this object is valid.
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		/// <returns>
-		/// <c>true</c> if the ID is valid;
-		/// otherwise, <c>false</c>.
-		/// </returns>
-		public bool HasValidID() =>
-			!string.IsNullOrWhiteSpace(SessionID);
-		/// <summary>
-		/// Returns the ID of this <see cref="SessionIdentification"/> object.
-		/// <code> since: v0.0.0 </code>
-		/// </summary>
-		public string GetID() => SessionID;
+		// some methods here
 		#endregion
 		//-------------------------------------------------
 		#region Set Method's Region

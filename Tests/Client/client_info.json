@@ -1,8 +1,90 @@
 {
-    "endpoint": "http://127.0.0.1:5001/",
-    "public_hash": "4c7148caff498d24deee6c8325f1c15773d637ed76c3a4056e00b77b2beb3097",
-    "private_hash": "866d3218b239d39c174fa2b16f54e0fa58f9c69fce8c2d941c12a47a7bc75229",
-    "platform": "Linux",
-    "name": "Test Python RCP Client",
-    "version": "1.0.0.0"
+    "jsonrpc": "2.0",
+    "result": {
+        "id": "ecb6501631337dc4de338acc5e71388c05f59a92a36c51b59bfbe274bdbc29b0",
+        "type": "USER",
+        "name": "エイリ・ヲト",
+        "username": "aliwoto1",
+        "display_picture_sizes": [{
+                "width": 640,
+                "height": 640,
+                "document": {
+                    "id": "35714fd511b6064908da4ed77c12f587-4cef1ae78044daa6924a80895c42d55b5e9c73202df59eff21d68cec6c1b8b3b-03e762e2",
+                    "file_mime": "image/jpeg",
+                    "file_name": "ecb6501631337dc4de338acc5e71388c05f59a92a36c51b59bfbe274bdbc29b0_default_640x640.jpg",
+                    "file_size": 17583,
+                    "file_type": "PHOTO",
+                    "flags": [],
+                    "created_timestamp": "1633548428"
+                }
+            },
+            {
+                "width": 512,
+                "height": 512,
+                "document": {
+                    "id": "35714fd511b6064908da4ed77c12f587-4cef1ae78044daa6924a80895c42d55b5e9c73202df59eff21d68cec6c1b8b3b-b00caf2a",
+                    "file_mime": "image/jpeg",
+                    "file_name": "ecb6501631337dc4de338acc5e71388c05f59a92a36c51b59bfbe274bdbc29b0_default_512x512.jpg",
+                    "file_size": 13460,
+                    "file_type": "PHOTO",
+                    "flags": [],
+                    "created_timestamp": "1633548428"
+                }
+            },
+            {
+                "width": 360,
+                "height": 360,
+                "document": {
+                    "id": "35714fd511b6064908da4ed77c12f587-4cef1ae78044daa6924a80895c42d55b5e9c73202df59eff21d68cec6c1b8b3b-c1aaaf42",
+                    "file_mime": "image/jpeg",
+                    "file_name": "ecb6501631337dc4de338acc5e71388c05f59a92a36c51b59bfbe274bdbc29b0_default_360x360.jpg",
+                    "file_size": 63505,
+                    "file_type": "PHOTO",
+                    "flags": [],
+                    "created_timestamp": "1633548428"
+                }
+            },
+            {
+                "width": 160,
+                "height": 160,
+                "document": {
+                    "id": "35714fd511b6064908da4ed77c12f587-4cef1ae78044daa6924a80895c42d55b5e9c73202df59eff21d68cec6c1b8b3b-b5e56dd9",
+                    "file_mime": "image/jpeg",
+                    "file_name": "ecb6501631337dc4de338acc5e71388c05f59a92a36c51b59bfbe274bdbc29b0_default_160x160.jpg",
+                    "file_size": 2999,
+                    "file_type": "PHOTO",
+                    "flags": [],
+                    "created_timestamp": "1633548428"
+                }
+            },
+            {
+                "width": 64,
+                "height": 64,
+                "document": {
+                    "id": "35714fd511b6064908da4ed77c12f587-4cef1ae78044daa6924a80895c42d55b5e9c73202df59eff21d68cec6c1b8b3b-6d540f46",
+                    "file_mime": "image/jpeg",
+                    "file_name": "ecb6501631337dc4de338acc5e71388c05f59a92a36c51b59bfbe274bdbc29b0_default_64x64.jpg",
+                    "file_size": 1895,
+                    "file_type": "PHOTO",
+                    "flags": [],
+                    "created_timestamp": "1633548428"
+                }
+            },
+            {
+                "width": 32,
+                "height": 32,
+                "document": {
+                    "id": "35714fd511b6064908da4ed77c12f587-4cef1ae78044daa6924a80895c42d55b5e9c73202df59eff21d68cec6c1b8b3b-b73336ed",
+                    "file_mime": "image/jpeg",
+                    "file_name": "ecb6501631337dc4de338acc5e71388c05f59a92a36c51b59bfbe274bdbc29b0_default_32x32.jpg",
+                    "file_size": 1188,
+                    "file_type": "PHOTO",
+                    "flags": [],
+                    "created_timestamp": "1633548428"
+                }
+            }
+        ],
+        "flags": []
+    },
+    "id": 637691452284371062
 }

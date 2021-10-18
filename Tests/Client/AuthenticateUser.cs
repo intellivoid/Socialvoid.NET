@@ -27,7 +27,6 @@ namespace Tests.Client
 				Log("got exception of type", ex.GetType(), "with error code of", ex.ErrorCode);
 				if (ex.Message != message || (int)ex.ErrorCode !=  errorCode)
 				{
-
 					throw;
 				}
 			}
@@ -37,17 +36,71 @@ namespace Tests.Client
 			"4c7148caff498d24deee6c8325f1c15773d637ed76c3a4056e00b77b2beb3097", // public hash
 			"866d3218b239d39c174fa2b16f54e0fa58f9c69fce8c2d941c12a47a7bc75229", // private hash
 			"Linux", // platform
-			"Test .NET RCP Client", // the name
+			"Test .NET RPC Client", // the name
 			"1.0.0.0" // version
 		)]
 		public void AuthenticateUserTest(string publicHash, string privateHash, 
 			string platform, string name, string version)
 		{
-			var myClient = 
+			var myClient =
 				SocialvoidClient.GetClient(publicHash, 
 					privateHash, platform, name, version);
-			myClient.CreateSession();
-			myClient.AuthenticateUser("aliwoto", "12345678");
+
+			try
+			{
+				myClient.CreateSession();
+				var session = myClient.GetSession();
+				Assert.IsNotNull(session);
+				Assert.IsNotNull(session.SessionID);
+			}
+			catch (Exception e)
+			{
+				Assert.Fail("Exception thrown: " + e.Message);
+				return;
+			}
+			Assert.IsNotNull(myClient.GetSession());
+			try
+			{
+				myClient.GetTermsOfService();
+				var peer = myClient.Register("aliwoto6", "ilovehentai69", "エイリ・ヲト");
+				Assert.IsNotNull(peer);
+				Log(peer.Name);
+			}
+			catch (UsernameAlreadyExistsException)
+			{
+				// if the username already exists, we can ignore this exception
+				// and continue with the test
+				Console.WriteLine("Username already exists");
+			}
+			catch (Exception ex)
+			{
+				Assert.Fail("Exception thrown: " + ex.Message);															
+				return;
+			}
+			bool isAuthenticated = false;
+			try
+			{
+				isAuthenticated = myClient.AuthenticateUser("aliwoto", "ilovehentai69");
+				if (isAuthenticated)
+				{
+					var session = myClient.GetSession();
+					Assert.IsNotNull(session);
+					Assert.IsNotNull(session.SessionID);
+					Log("created: ", session.Created);
+					Log("Expires: ", session.Expires);
+				}
+			}
+			catch (Exception ex)
+			{
+				Log(ex);
+				Assert.Fail("Exception thrown: " + ex.Message);
+				return;
+			}
+
+			if (!isAuthenticated)
+			{
+				Assert.Fail("User could not be authenticated");
+			}
 		}
 
 

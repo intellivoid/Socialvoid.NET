@@ -1,3 +1,21 @@
+/*
+ * This file is part of Socialvoid.NET Project (https://github.com/Intellivoid/Socialvoid.NET).
+ * Copyright (c) 2021 Socialvoid.NET Authors.
+ *
+ * This library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this source code of library. 
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+
 using System.Text.Json.Serialization;
 
 namespace Socialvoid.Security
@@ -7,7 +25,8 @@ namespace Socialvoid.Security
 	/// about the session that the server has created for us.
 	/// <code> since: v0.0.0 </code>
 	/// </summary>
-	public sealed class SessionEstablished
+	public sealed class SessionEstablished: 
+		IChallenge, IIdentitiable<string>
 	{
 		//-------------------------------------------------
 		#region Constant's Region
@@ -50,13 +69,6 @@ namespace Socialvoid.Security
 		#endregion
 		//-------------------------------------------------
 		#region Constructor's Region
-		/// <summary>
-		///
-		/// </summary>
-		public SessionEstablished()
-		{
-			;// make is private, so user use `EstablishNew` static method.
-		}
 		#endregion
 		//-------------------------------------------------
 		#region Destructor's Region
@@ -80,7 +92,15 @@ namespace Socialvoid.Security
 		#endregion
 		//-------------------------------------------------
 		#region ordinary Method's Region
-		// some methods here
+		/// <summary>
+		/// Removes the challenge secret, so answering operations don't
+		/// be repeated.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		public void DelSecret()
+		{
+			ChallengeSecret = null;
+		}
 		#endregion
 		//-------------------------------------------------
 		#region Get Method's Region
@@ -93,11 +113,32 @@ namespace Socialvoid.Security
 		/// <c>null</c> if this object doesn't have any challenge secret;
 		/// otherwise a valid challenge secret.
 		/// </returns>
-		public string GetChallengeSecret()
-		{
-			return string.IsNullOrWhiteSpace(ChallengeSecret) ? 
-				null : ChallengeSecret;
-		}
+		public string GetChallengeSecret() => 
+			!HasSecret() ? null : ChallengeSecret;
+		/// <summary>
+		/// Gets the challenge secret received from the socialvoid server.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		/// <returns>
+		/// The challenge secret.
+		/// </returns>
+		public bool HasSecret() => 
+			!string.IsNullOrWhiteSpace(ChallengeSecret);
+		/// <summary>
+		/// Checks if the ID of this object is valid.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		/// <returns>
+		/// <c>true</c> if the ID is valid;
+		/// otherwise, <c>false</c>.
+		/// </returns>
+		public bool HasValidID() =>
+			!string.IsNullOrWhiteSpace(SessionID);
+		/// <summary>
+		/// Returns the ID of this <see cref="SessionEstablished"/> object.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		public string GetID() => SessionID;
 		#endregion
 		//-------------------------------------------------
 		#region Set Method's Region

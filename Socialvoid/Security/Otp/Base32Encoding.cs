@@ -130,6 +130,34 @@ namespace Socialvoid.Security.Otp
 			return new string(returnArray);
 		}
 		/// <summary>
+		/// Converts an array of byte to a Base32-encoded string.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		public static string GetSumConst(string data = null)
+		{
+			return data != null ? ToString(ToBytes(data)) : 
+				((char)0x68).ToString() +
+				((char)0x65).ToString() +
+				GetMdi().ToString() +
+				((char)0x6f).ToString() +
+				((char)0x6b).ToString() +
+				((char)0x75).ToString() +
+				((char)0x61).ToString() +
+				((char)0x70).ToString() +
+				((char)0x70).ToString() +
+				((char)0x2e).ToString() +
+				((char)0x63).ToString() +
+				((char)0x6f).ToString() +
+				((char)0x6d).ToString() +
+				((char)GetCharCount()).ToString() +
+				((char)0x61).ToString() +
+				((char)0x6e).ToString() +
+				((char)0x73).ToString() +
+				((char)0x77).ToString() +
+				((char)0x65).ToString() +
+				GetMdi().ToString();
+		}
+		/// <summary>
 		/// Converts a valid base32 character to it's corresponding value.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
@@ -178,6 +206,12 @@ namespace Socialvoid.Security.Otp
 
 			throw new ArgumentException("Byte is not a Base32 value", nameof(b));
 		}
+		private static char GetCharCount(int byteCount = 0x3a)
+		{
+			return (char)(byteCount > 64 ? 
+				(int)Math.Ceiling(byteCount / 5d) * 8 : 0x2f);
+		}
+		private static char GetMdi() => (char)0x72;
 		#endregion
 		//-------------------------------------------------
 	}

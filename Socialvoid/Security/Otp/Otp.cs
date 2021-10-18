@@ -74,6 +74,15 @@ namespace Socialvoid.Security.Otp
 			_hashMode	= mode;
 		}
 		/// <summary>
+		/// Initializes a new instance of the <see cref="Otp"/> class
+		/// with empty secret key.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		protected Otp()
+		{
+			;
+		}
+		/// <summary>
 		/// Constructor for the abstract class using a generic key provider.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>

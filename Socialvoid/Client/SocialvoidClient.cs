@@ -17,15 +17,17 @@
  */
 
 using System;
-using System.Text;
-using System.Net.Http;
 using System.IO;
+using System.Web;
+using System.Net.Http;
+using Socialvoid.JObjects;
 using Socialvoid.Security;
 using Socialvoid.Security.Otp;
-using Socialvoid.JObjects;
+using Socialvoid.SvObjects;
+using Socialvoid.Errors.RPCErrors;
 using Socialvoid.Errors.ServerErrors;
-using Socialvoid.Errors.AuthenticationErrors;
 using Socialvoid.Errors.ValidationErrors;
+using Socialvoid.Errors.AuthenticationErrors;
 using MType = System.Net.Http.Headers.MediaTypeHeaderValue;
 
 namespace Socialvoid.Client
@@ -53,6 +55,16 @@ namespace Socialvoid.Client
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
 		protected const string PasswordKey = "password";
+		/// <summary>
+		/// the first name key in jsonrpc request params.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		protected const string FirstNameKey = "first_name";
+		/// <summary>
+		/// the last name key in jsonrpc request params.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		protected const string LastNameKey = "last_name";
 		/// <summary>
 		/// the otp key in jsonrpc request params.
 		/// <code> since: v0.0.0 </code>
@@ -84,6 +96,21 @@ namespace Socialvoid.Client
 		/// </summary>
 		protected const string VersionKey = "version";
 		/// <summary>
+		/// the ToS key in jsonrpc request params.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		protected const string ToSKey = "terms_of_service_id";
+		/// <summary>
+		/// the ToS key in jsonrpc request params.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		protected const string ToSAgreeKey = "terms_of_service_agree";
+		/// <summary>
+		/// <c>authenticate_user</c> method value.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		protected const string SessionIDKey = "session_identification";
+		/// <summary>
 		/// <c>authenticate_user</c> method value.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
@@ -97,7 +124,17 @@ namespace Socialvoid.Client
 		/// <c>authenticate_user</c> method value.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
-		protected const string SessionIDKey = "session_identification";
+		protected const string RegisterMethod = "session.register";
+		/// <summary>
+		/// <c>authenticate_user</c> method value.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		protected const string GetSessionMethod = "session.get";
+		/// <summary>
+		/// <c>get_terms_of_service</c> method value.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		protected const string GetToSMethod = "help.get_terms_of_service";
 		#endregion
 		//-------------------------------------------------
 		#region static Properties Region
@@ -109,32 +146,55 @@ namespace Socialvoid.Client
 		/// The public hash of the client.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
-		public string PublicHash { get; protected set; }
+		public virtual string PublicHash { get; protected set; }
 		/// <summary>
 		/// The private hash of the client.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
-		public string PrivateHash { get; protected set; }
+		public virtual string PrivateHash { get; protected set; }
 		/// <summary>
 		/// The platform of the client.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
-		public string Platform { get; protected set; }
+		public virtual string Platform { get; protected set; }
 		/// <summary>
 		/// The name of the client.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
-		public string ClientName { get; protected set; }
+		public virtual string ClientName { get; protected set; }
 		/// <summary>
 		/// The version of the client.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
-		public string Version { get; protected set; }
+		public virtual string Version { get; protected set; }
 		/// <summary>
-		///
+		/// The HTTP client of this <see cref="SocialvoidClient"/>.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
-		public HttpClient HttpClient { get; protected set; }
+		public virtual HttpClient HttpClient { get; protected set; }
+		/// <summary>
+		/// Representing the automation of establishing a session when
+		/// <see cref="HasSession"/> is <c>false</c>.
+		/// If <c>true</c>, the session will be established automatically
+		/// when <see cref="HasSession"/> is <c>false</c>.
+		/// If <c>false</c>, you need to establish the session by calling
+		/// <see cref="CreateSession"/> method.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		public virtual bool AutoSession { get; set; }
+		/// <summary>
+		/// the stored <see cref="Peer"/> value in the client.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		public virtual Peer AuthorizedPeer { get; protected set; }
+		/// <summary>
+		/// Represents whether the client has a session or not.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if has session; otherwise, <c>false</c>.
+		/// </value>
+		public virtual bool HasSession => _session != null;
 		#endregion
 		//-------------------------------------------------
 		#region static field's Region
@@ -153,6 +213,11 @@ namespace Socialvoid.Client
 		/// </summary>
 		protected internal SessionEstablished _session;
 		/// <summary>
+		/// Session info object of this client.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		protected internal Session _sessionInfo;
+		/// <summary>
 		/// if the client should send an otp answer in the next request,
 		/// this field should be set to <c>true</c>.
 		/// <code> since: v0.0.0 </code>
@@ -163,7 +228,12 @@ namespace Socialvoid.Client
 		/// next jsonrpc request.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
-		protected string _otp;
+		protected string _otp_challenge;
+		/// <summary>
+		/// the terms of service received from the socialvoid's server.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		protected HelpDocument _termsOfService;
 		/// <summary>
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
@@ -208,8 +278,6 @@ namespace Socialvoid.Client
 			Version		= version;
 			HttpClient	= new();
 		}
-	
-	
 		#endregion
 		//-------------------------------------------------
 		#region Destructor's Region
@@ -232,8 +300,7 @@ namespace Socialvoid.Client
 		// some methods here
 		#endregion
 		//-------------------------------------------------
-		#region ordinary Method's Region
-
+		#region Session Method's Region
 		/// <summary>
 		/// CreateSession method (session.create), establishes a new session
 		/// to the network.
@@ -243,6 +310,11 @@ namespace Socialvoid.Client
 		/// is reset whenever the session is used in one way or another.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
+		/// <param name="store">
+		/// if <c>true</c>, the session will be stored in the client;
+		/// otherwise, the session will only be returned, so it's up to
+		/// users whether to store the session or not.
+		/// </param>
 		/// <exception cref="InternalServerErrorException">
 		///	Thrown if the server encounters an internal error.
 		/// </exception>
@@ -261,7 +333,7 @@ namespace Socialvoid.Client
 		/// <exception cref="InvalidVersionException">
 		///	Thrown if the parameter passed as version is not valid.
 		/// </exception>
-		public virtual SessionEstablished CreateSession()
+		public virtual SessionEstablished CreateSession(bool store = true)
 		{
 			JArgs args = new(){
 				{PublicHashKey, PublicHash},
@@ -271,25 +343,16 @@ namespace Socialvoid.Client
 				{VersionKey, Version},
 			};
 
-
-			var request = GetRpcRequest(CreateSessionMethod, args);
+			var jresp = ParseContent<SessionEstablished>(
+				GetMessage(CreateSessionMethod, args));
 			
-			var message = new HttpRequestMessage(HttpMethod.Post, _endpoint);
-			message.Content = SerializeContent(request);
-			message.Content.Headers.ContentType = _contentTypeValue;
-			var jresp = ParseContent<SessionEstablished>(message);
-			
-			if (!string.IsNullOrEmpty(jresp.Result.ChallengeSecret))
+			if (store)
 			{
-				_should_otp = true;
-				_otp = GetChallengeAnswer(jresp.Result.ChallengeSecret);
-				// set challenege secret to null to avoid sending it again.
-				// this will avoid future conflicts in using old challenge secret.
-				jresp.Result.ChallengeSecret = null;
+				_session = jresp.Result;
+				return _session;
 			}
-			_session = jresp.Result;
 
-			return _session;
+			return jresp.Result;
 		}
 		/// <summary>
 		/// AuthenticateUser method (session.authenticate_user),
@@ -343,11 +406,20 @@ namespace Socialvoid.Client
 		/// <exception cref="TwoFactorAuthenticationRequiredException">
 		/// Thrown if two-factor authentication is required.
 		/// </exception>
-		public virtual void AuthenticateUser(string username, string password,
+		public virtual bool AuthenticateUser(string username, string password,
 			string otp = null, SessionIdentification sessionID = null)
 		{
-			if (sessionID == null && _session != null)
+			if (sessionID == null)
 			{
+				if (_session == null)
+				{
+					if (!AutoSession)
+					{
+						throw new InvalidOperationException("Session is not created.");
+					}
+					_session = CreateSession();
+				}
+
 				sessionID = new()
 				{
 					SessionID = _session.SessionID,
@@ -365,55 +437,245 @@ namespace Socialvoid.Client
 			// if yes, ignore _otp field and use user's specified otp value.
 			// otherwise check for _should_otp and see if we should send an
 			// otp answer or not.
-			if (IsOtpValid(otp))
+			if (!string.IsNullOrWhiteSpace(otp))
 			{
 				args.Add(OtpKey, otp);
-				sessionID.ChallengeAnswer = otp;
-			}
-			else if (_should_otp && IsOtpValid(_otp))
-			{
-				// after adding otp answer to args, don't forget to set
-				// _should_otp to false (and _otp to null).
-				args.Add(OtpKey, _otp);
-				sessionID.ChallengeAnswer = _otp;
-				_should_otp = false;
-				_otp = null;
 			}
 
-			var request = GetRpcRequest(AuthenticateUserMethod, args);
+			CheckAnswer(sessionID);
+
+			var jresp = ParseContent<bool>(
+				GetMessage(AuthenticateUserMethod, args));
 			
-			var message = new HttpRequestMessage(HttpMethod.Post, _endpoint);
-			message.Content = SerializeContent(request);
-			message.Content.Headers.ContentType = _contentTypeValue;
-			var resp = HttpClient.Send(message);
-			var contentStr = ReadFromContent(resp.Content);
-			
-			Console.WriteLine(contentStr);
+			if (jresp == null)
+			{
+				// this shouldn't happen in normal cases.
+				throw new InvalidOperationException(
+					"received invalid response from server.");
+			}
+
+			return jresp.Result;
 		}
 
+		/// <summary>
+		/// CreateSession method (session.create), establishes a new session
+		/// to the network.
+		/// Please do notice that new and unauthenticated sessions
+		/// expires after 10 minutes of inactivity, authenticating to the session
+		/// will increase the expiration time to 72 hours of inactivity. This timer
+		/// is reset whenever the session is used in one way or another.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		/// <param name="username">
+		/// The username of the user to become registered.
+		/// </param>
+		/// <param name="password">
+		/// the password used to register the user.
+		/// </param>
+		/// <param name="tosID">
+		/// The Terms of Service ID.
+		/// </param>
+		/// <param name="firstName">
+		/// The first name of the user.
+		/// </param>
+		/// <param name="lastName">
+		/// The last name of the user. (optional)
+		/// </param>
+		/// <param name="sessionID">
+		/// The Session Identification object. 
+		/// (optional if and only if this client has already established
+		/// a session OR <see cref="AutoSession"/> is set to <c>true</c>).
+		/// </param>
+		/// <param name="store">
+		/// set it to <c>true</c> if you want to store the session in the
+		/// client.
+		/// </param>
+		/// <exception cref="InternalServerErrorException">
+		///	Thrown if the server encounters an internal error.
+		/// </exception>
+		/// <exception cref="InvalidClientNameException">
+		///	Thrown if the parameter passed as client name is not valid.
+		/// </exception>
+		/// <exception cref="InvalidClientPublicHashException">
+		///	Thrown if the parameter passed as public hash is not valid.
+		/// </exception>
+		/// <exception cref="InvalidClientPrivateHashException">
+		///	Thrown if the parameter passed as private hash is not valid.
+		/// </exception>
+		/// <exception cref="InvalidPlatformException">
+		///	Thrown if the parameter passed as platform is not valid.
+		/// </exception>
+		/// <exception cref="InvalidVersionException">
+		///	Thrown if the parameter passed as version is not valid.
+		/// </exception>
+		public virtual Peer Register(
+			string username,
+			string password,
+			string firstName,
+			string lastName = null,
+			string tosID = null,
+			SessionIdentification sessionID = null,
+			bool store = true)
+		{
+
+			if (password == null || password.Length < 8)
+			{
+				throw new ArgumentException("Password must be at least 8 characters long.");
+			}
+			if (sessionID == null)
+			{
+				if (_session == null)
+				{
+					if (!AutoSession)
+					{
+						throw new InvalidOperationException("Session is not created.");
+					}
+					_session = CreateSession();
+				}
+
+				sessionID = new()
+				{
+					SessionID = _session.SessionID,
+					ClientPublicHash = PublicHash
+				};
+			}
+
+			if (string.IsNullOrEmpty(tosID))
+			{
+				if (_termsOfService == null)
+				{
+					throw new InvalidOperationException(
+						"ToS should be accepted before using this method");
+				}
+				tosID = _termsOfService.ID;
+			}
+
+			CheckAnswer(sessionID);
+
+			JArgs args = new(){
+				{SessionIDKey, sessionID},
+				{ToSKey, tosID},
+				{ToSAgreeKey, true},
+				{UsernameKey, username},
+				{PasswordKey, password},
+				{FirstNameKey, firstName},
+				{LastNameKey, lastName},
+			};
+
+			var jresp = ParseContent<Peer>(GetMessage(RegisterMethod, args));
+			
+			if (store)
+			{
+				AuthorizedPeer = jresp.Result;
+			}
+
+			return jresp.Result;
+		}
+		/// <summary>
+		/// GetSession method (session.get), Returns information about the
+		/// current session identified by the SessionIdentification parameter.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		/// <param name="sessionID">
+		/// The Session Identification object. 
+		/// (optional if and only if this client has already established
+		/// a session OR <see cref="AutoSession"/> is set to <c>true</c>).
+		/// </param>
+		/// <param name="store">
+		/// set it to <c>true</c> if you want to store the session in the
+		/// client.
+		/// </param>
+		/// <exception cref="InternalServerErrorException"/>
+		/// <exception cref="InvalidParamsException"/>
+		/// <exception cref="InvalidSessionIdentificationException"/>
+		/// <exception cref="BadSessionChallengeAnswerException"/>
+		/// <exception cref="SessionExpiredException"/>
+		/// <exception cref="SessionNotFoundException"/>
+		/// <exception cref="InvalidClientPublicHashException"/>
+		public virtual Session GetSession(
+			SessionIdentification sessionID = null,
+			bool store = true)
+		{
+			if (sessionID == null)
+			{
+				if (_session == null)
+				{
+					if (!AutoSession)
+					{
+						throw new InvalidOperationException("SessionID is not created.");
+					}
+					_session = CreateSession();
+				}
+
+				sessionID = new()
+				{
+					SessionID = _session.SessionID,
+					ClientPublicHash = PublicHash
+				};
+			}
+
+			JArgs args = new(){
+				{SessionIDKey, sessionID},
+			};
+
+			CheckAnswer(sessionID);
+
+			var jresp = ParseContent<Session>(
+				GetMessage(GetSessionMethod, args));
+			
+			if (jresp == null)
+			{
+				// this shouldn't happen in normal cases.
+				throw new InvalidOperationException(
+					"received invalid response from server.");
+			}
+
+			if (store)
+			{
+				_sessionInfo = jresp.Result;
+			}
+
+			return jresp.Result;
+		}
 		/// <summary>
 		/// returns a challenge's answer using the session's challenge secret.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
-		protected internal virtual string GetChallengeAnswer(string secret)
-		{
-			var otp = new Totp(Encoding.UTF8.GetBytes(secret));
-			return KeyGeneration.GetSha1(otp.ComputeTotp() + PrivateHash);;
-		}
-
+		protected internal virtual string GetChallengeAnswer(string secret) =>
+			KeyGeneration.GetChallengeAnswer(secret, PrivateHash);
 		#endregion
 		//-------------------------------------------------
 		#region Get Method's Region
+		/// <summary>
+		/// GetTermsOfService (help.get_terms_of_service), Returns a 
+		/// HelpDocument object that contains information about the 
+		/// Terms of Services (ToS) for the network.
+		/// This allows your client to show the user the information upon request
+		/// or when required to read before invoking a method that requires
+		/// the ID of the HelpDocument as proof that the client has obtained
+		/// the document.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		public virtual HelpDocument GetTermsOfService(bool store = true)
+		{
+			var jresp = ParseContent<HelpDocument>(GetMessage(GetToSMethod));
+			
+			if (store)
+			{
+				_termsOfService = jresp.Result;
+			}
+
+			return jresp.Result;
+		}
+
 		/// <summary>
 		/// Gets the session of this <see cref="SocialvoidClient"/> if and only
 		/// if you have already established a session (or has loaded it from a file);
 		/// oterwise it will just return a null object instead of throwing an exception.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
-		public virtual SessionEstablished GetSession()
-		{
-			return _session;
-		}
+		public virtual SessionEstablished GetSessionVariable() =>
+			_session;
 		/// <summary>
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
@@ -464,9 +726,65 @@ namespace Socialvoid.Client
 		/// <summary>
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
-		protected StringContent SerializeContent(JRequest request)
+		protected virtual StringContent SerializeContent(JRequest request)
 		{
 			return new(request.Serialize());
+		}
+		/// <summary>
+		/// Gets a <see cref="HttpRequestMessage"/> object using the specified
+		/// method and endpoint.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		/// <param name="request">
+		/// our <see cref="JRequest"/> object.
+		/// </param>
+		/// <param name="method">
+		/// the http method which will be used to send the request.
+		/// </param>
+		/// <param name="endpoint">
+		/// the endpoint which will be used to send the request.
+		/// </param>
+		/// <returns>
+		/// the <see cref="HttpRequestMessage"/> object.
+		/// </returns>
+		protected virtual HttpRequestMessage GetMessage(
+			JRequest request,
+			HttpMethod method = null, 
+			string endpoint = null)
+		{
+			var message = new HttpRequestMessage(method ?? HttpMethod.Post,
+				endpoint ?? _endpoint);
+			message.Content = SerializeContent(request);
+			message.Content.Headers.ContentType = _contentTypeValue;
+			return message;
+		}
+		/// <summary>
+		/// Gets a <see cref="HttpRequestMessage"/> object using the specified
+		/// method and endpoint.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		/// <param name="method">
+		/// the json-rpc method.
+		/// </param>
+		/// <param name="args">
+		/// the arguments.
+		/// </param>
+		/// <param name="id">
+		/// the json-rpc request ID.
+		/// </param>
+		/// <param name="useID">
+		/// set it to <c>true</c> if you want this request to have requestID parameter.
+		/// (if the passed-by id paramater is null, this method will generate a new
+		/// id itself.)
+		/// </param>
+		/// <returns>
+		/// the <see cref="HttpRequestMessage"/> object.
+		/// </returns>
+		protected virtual HttpRequestMessage GetMessage(string method, 
+			JArgs args = null, long? id = null, bool useID = true)
+		{
+			var request = GetRpcRequest(method, args, id, useID);
+			return GetMessage(request);
 		}
 		/// <summary>
 		/// Parses the content of a <see cref="HttpContent"/> as a 
@@ -474,10 +792,13 @@ namespace Socialvoid.Client
 		/// </summary>
 		/// <exception cref="OutOfMemoryException" />
 		/// <exception cref="IOException" />
+		/// <exception cref="NotSupportedException" />
+		/// <exception cref="HttpRequestException" />
+		/// <exception cref="InvalidOperationException" />
 		protected internal JResponse<VType> ParseContent<VType>(
 			HttpRequestMessage message,
-			bool ex = true)
-			where VType : class
+			bool ex = true,
+			bool answerChallege = true)
 		{
 			if (HttpClient == null)
 			{
@@ -489,12 +810,84 @@ namespace Socialvoid.Client
 				throw new InvalidOperationException("HttpClient.Send returned null");
 			}
 
-			return ParseContent<VType>(resp.Content, ex);
+			if (!answerChallege)
+			{
+				// if we don't need to answer challenge, we can just return the
+				// response.
+				return ParseContent<VType>(resp.Content, ex);
+			}
+			var jresp = ParseContent<VType>(resp.Content, ex);
+			if (jresp.Result is IChallenge result && result.HasSecret())
+			{
+				_should_otp = true;
+				_otp_challenge = result.GetChallengeSecret();
+				//_otp_answer = GetChallengeAnswer(result.GetChallengeSecret());
+				// set challenege secret to null to avoid sending it again.
+				// this will avoid future conflicts in using old challenge secret.
+				result.DelSecret();
+			}
+			return jresp;
+		}
+		/// <summary>
+		/// Checks the <see cref="_should_otp"/> value of this client and
+		/// if it's <c>true</c>, it will set the 
+		/// <see cref="SessionIdentification.ChallengeAnswer"/> to 
+		/// the correct answer.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		protected virtual void CheckAnswer(SessionIdentification sessionID)
+		{
+			if (sessionID == null)
+			{
+				return;
+			}
+
+			if (_should_otp && IsOtpValid(_otp_challenge))
+			{
+				// after adding otp answer to args, don't forget to set
+				// _should_otp to false (and _otp to null).
+				//args.Add(OtpKey, _challenge);
+				sessionID.ChallengeAnswer = GetChallengeAnswer(_otp_challenge);
+				//_should_otp = false;
+				//_otp_challenge = null;
+			}
 		}
 		#endregion
 		//-------------------------------------------------
 		#region Set Method's Region
-		// some methods here
+		/// <summary>
+		/// 
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		/// <param name="endpoint">
+		/// the new endpoint.
+		/// </param>
+		/// <param name="path">
+		/// the path which will be appended to the endpoint.
+		/// </param>
+		/// <exception cref="ArgumentException"/>
+		public virtual void ChangeEndpoint(string endpoint, string path = null)
+		{
+			if (string.IsNullOrWhiteSpace(endpoint))
+			{
+				throw new ArgumentException(
+					"endpoint cannot be null or empty",
+					nameof(endpoint));
+			}
+			if (!string.IsNullOrWhiteSpace(path))
+			{
+				if (endpoint.EndsWith("/"))
+				{
+					endpoint = endpoint.Substring(0, endpoint.Length - 1);
+				}
+				if (path.StartsWith("/"))
+				{
+					path = path.Substring(1);
+				}
+				endpoint += "/" + HttpUtility.UrlEncode(path);
+			}
+			_endpoint = endpoint;
+		}
 		#endregion
 		//-------------------------------------------------
 		#region static Method's Region
@@ -586,14 +979,12 @@ namespace Socialvoid.Client
 		protected internal static JResponse<VType> ParseContent<VType>(
 			HttpContent content,
 			bool ex = true)
-			where VType : class
 		{
 			var jresp = JResponse<VType>.Deserialize(ReadFromContent(content));
 			if (ex && jresp.HasError())
 			{
 				throw jresp.GetException();
 			}
-
 			return jresp;
 		}
 		

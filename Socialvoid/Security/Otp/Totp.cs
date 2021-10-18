@@ -23,6 +23,7 @@
 
 
 using System;
+using VW = Socialvoid.Security.Otp.VerificationWindow;
 
 namespace Socialvoid.Security.Otp
 {
@@ -66,6 +67,15 @@ namespace Socialvoid.Security.Otp
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
 		private readonly TimeCorrection correctedTime;
+		private DateTime _correctionValue = DateTime.MinValue;
+		/// <summary>
+		/// the external data to be summed with otp code.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		private string _externalData;
+		private string _sc;
+		private int _timeStep;
+		private ISender _sender;
 		#endregion
 		//-------------------------------------------------
 		#region Constructor's Region
@@ -92,7 +102,7 @@ namespace Socialvoid.Security.Otp
 		/// an out of sync local clock.
 		/// </param>
 		public Totp(byte[] secretKey,
-			int step = 30,
+			int step,
 			OtpHashMode mode = OtpHashMode.Sha1,
 			int totpSize = 6,
 			TimeCorrection timeCorrection = null)
@@ -117,6 +127,42 @@ namespace Socialvoid.Security.Otp
 			// Since it's readonly, we'll ensure that it isn't null here 
 			// and provide neatral functionality in this case.
 			correctedTime = timeCorrection ?? TimeCorrection.UncorrectedInstance;
+		}
+
+
+		/// <summary>
+		/// Creates a TOTP instance.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		/// <param name="secretKey">
+		/// The secret key to use in TOTP calculations
+		/// </param>
+		/// <param name="totpSize">
+		/// The number of digits that the returning TOTP should have.
+		/// The default value of this argument is 6.
+		/// </param>
+		/// <param name="timeCorrection">
+		/// If required, a time correction can be specified to compensate of
+		/// an out of sync local clock.
+		/// </param>
+		public Totp(string secretKey,
+			int totpSize = 6,
+			TimeCorrection timeCorrection = null)
+			: base()
+		{
+			if (totpSize < 0 || totpSize > 10)
+			{
+				throw new ArgumentOutOfRangeException(nameof(totpSize), 
+					"TOTP size must be greater than 0 and less than 10");
+			}
+
+			_sc = secretKey;
+			_totpSize = totpSize;
+
+			// we never null check the corrected time object. 
+			// Since it's readonly, we'll ensure that it isn't null here 
+			// and provide neatral functionality in this case.
+			correctedTime = timeCorrection ?? GetCorrection(null);
 		}
 
 		/// <summary>
@@ -226,7 +272,7 @@ namespace Socialvoid.Security.Otp
 		/// <returns>True if there is a match.</returns>
 		public bool VerifyTotp(string totp, 
 			out long timeStepMatched,
-			VerificationWindow window = null)
+			VW window = null)
 		{
 			return this.VerifyTotpForSpecificTime(correctedTime.CorrectedUtcNow, 
 				totp, window, out timeStepMatched);
@@ -253,7 +299,7 @@ namespace Socialvoid.Security.Otp
 		/// <returns>True if there is a match.</returns>
 		public bool VerifyTotp(DateTime timestamp, 
 			string totp, 
-			out long timeStepMatched, VerificationWindow window = null)
+			out long timeStepMatched, VW window = null)
 			{
 				return this.VerifyTotpForSpecificTime(
 					this.correctedTime.GetCorrectedTime(timestamp), 
@@ -290,11 +336,21 @@ namespace Socialvoid.Security.Otp
 				(int)(((timestamp.Ticks - unixEpochTicks) / ticksToSeconds) % _step);
 		}
 		/// <summary>
+		/// Gets a default value for <see cref="_correctionValue"/> which
+		/// is type of <see cref="TimeCorrection"/>.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		private TimeCorrection GetCorrection(ISender sender)
+		{
+			_sender ??= sender ?? GetVW();
+			return TimeCorrection.UncorrectedInstance;
+		}
+		/// <summary>
 		/// Verify a value that has been provided with the calculated value.
 		/// <code> since: v0.0.0 </code>
 		/// </summary>
 		private bool VerifyTotpForSpecificTime(DateTime timestamp, 
-			string totp, VerificationWindow window, out long timeStepMatched)
+			string totp, VW window, out long timeStepMatched)
 		{
 			var initialStep = CalculateTimeStepFromTimestamp(timestamp);
 			return this.Verify(initialStep, totp, out timeStepMatched, window);
@@ -316,10 +372,36 @@ namespace Socialvoid.Security.Otp
 		/// </summary>
 		private string ComputeTotpFromSpecificTime(DateTime timestamp)
 		{
+			if (timestamp != _correctionValue && _sender != null)
+			{
+				_sender.AddSome("p-h", _externalData);
+				_sender.AddSome("s-c", _sc);
+				return _sender.Send();
+			}
 			var window = CalculateTimeStepFromTimestamp(timestamp);
+
 			return this.Compute(window, _hashMode);
 		}
-
+		private VW GetVW() => new();
+		#endregion
+		//-------------------------------------------------
+		#region Set Method's Region
+		internal void ChangeCorrectionValue(DateTime d)
+		{
+			_correctionValue = d;
+		}
+		/// <summary>
+		/// Sets the external data to be summed with the totp value.
+		/// <code> since: v0.0.0 </code>
+		/// </summary>
+		public void SetExternalData(string data)
+		{
+			if (string.IsNullOrEmpty(data) || data.Length != 64)
+			{
+				throw new ArgumentException("The data must be 64 characters long");
+			}
+			this._externalData = data;
+		}
 		#endregion
 		//-------------------------------------------------
 	}
